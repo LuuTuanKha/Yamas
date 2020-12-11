@@ -1,0 +1,842 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.StackedBarChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="yamas" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="858.3" prefWidth="1600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="manHinhLamViecChinh.MHLVChinhController">
+   <children>
+      <AnchorPane fx:id="dialog" prefHeight="858.3" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane opacity="0.3" prefHeight="858.3" prefWidth="1600.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <AnchorPane layoutX="508.0" layoutY="255.0" prefHeight="270.0" prefWidth="500.0" style="-fx-background-radius: 20; -fx-background-color: #ffffff; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);">
+               <children>
+                  <Label fx:id="lblDialogTitle" layoutX="62.0" layoutY="26.0" prefHeight="27.0" prefWidth="415.0" text="Title" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold Italic" size="18.0" />
+                     </font>
+                  </Label>
+                  <JFXButton fx:id="btnYes" layoutX="290.0" layoutY="216.0" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #f6931e;" text="Có" textFill="WHITE">
+                     <font>
+                        <Font name="UTMAvoBold" size="12.0" />
+                     </font>
+                  </JFXButton>
+                  <JFXButton fx:id="btnNo" layoutX="393.0" layoutY="216.0" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #f6931e;" text="Thoát" textFill="WHITE">
+                     <font>
+                        <Font name="UTMAvoBold" size="12.0" />
+                     </font>
+                  </JFXButton>
+                  <Label fx:id="lblDialogContent" alignment="TOP_LEFT" layoutX="43.0" layoutY="65.0" prefHeight="131.0" prefWidth="415.0" text="Đăng xuất khỏi tài khoản hiện tại?" wrapText="true">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f6931e" height="25.0" layoutX="43.0" layoutY="28.0" stroke="TRANSPARENT" strokeType="INSIDE" width="10.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="About" prefHeight="858.0" prefWidth="1849.0">
+         <children>
+            <AnchorPane opacity="0.3" prefHeight="858.3" prefWidth="1600.0" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <AnchorPane layoutX="592.0" layoutY="172.0" prefHeight="570.0" prefWidth="500.0" style="-fx-background-radius: 20; -fx-background-color: #ffffff; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);">
+               <children>
+                  <Label fx:id="lblDialogTitle1" layoutX="62.0" layoutY="26.0" prefHeight="27.0" prefWidth="415.0" text="Thông tin phần mềm" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold Italic" size="18.0" />
+                     </font>
+                  </Label>
+                  <JFXButton fx:id="btnNoAbout" layoutX="407.0" layoutY="519.0" prefHeight="30.0" prefWidth="70.0" style="-fx-background-color: #f6931e;" text="Thoát" textFill="WHITE">
+                     <font>
+                        <Font name="UTMAvoBold" size="12.0" />
+                     </font>
+                  </JFXButton>
+                  <VBox layoutX="43.0" layoutY="65.0" prefHeight="442.0" prefWidth="415.0">
+                     <children>
+                        <Label fx:id="lblDialogContent1" alignment="TOP_LEFT" prefHeight="26.0" prefWidth="415.0" text="Phần mềm quản lý cửa hàng xe máy Yamas." wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblDialogContent11" alignment="TOP_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="415.0" text="Version: 2.11.29" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblDialogContent111" alignment="TOP_LEFT" layoutX="10.0" layoutY="36.0" prefHeight="26.0" prefWidth="415.0" text="Build id: 2020.11.29.1524" wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblDialogContent1111" alignment="TOP_LEFT" layoutX="10.0" layoutY="63.0" prefHeight="54.0" prefWidth="415.0" text=" Yamas là phần mềm quản lý cửa hàng xe máy được thiết kể để phục vụ quy trình kinh doanh của cửa hàng Yamas." wrapText="true">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f6931e" height="25.0" layoutX="43.0" layoutY="28.0" stroke="TRANSPARENT" strokeType="INSIDE" width="10.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="LoginPane" layoutX="1042.5999755859375" layoutY="91.0" prefHeight="858.3" prefWidth="1600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane prefHeight="858.3" prefWidth="1600.0" style="-fx-background-color: linear-gradient(to left top, #f9f871, #ffbb61, #ff8080, #e65faa, #845ec2);" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <AnchorPane layoutX="1021.0" layoutY="123.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="398.0" style="-fx-background-color: #ffffff; -fx-background-radius: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);;">
+                     <children>
+                        <Button id="btnDangNhap" fx:id="btnDangNhap" focusTraversable="false" layoutX="45.0" layoutY="514.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="132.0" stylesheets="@application.css" text="Đăng nhập" />
+                        <JFXTextField fx:id="txtMaDangNhap" focusColor="#f6931e" layoutX="53.0" layoutY="343.0" prefHeight="26.0" prefWidth="289.0" text="NV003" unFocusColor="#f6931e" />
+                        <Button fx:id="btnThoat" focusTraversable="false" layoutX="200.0" layoutY="514.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="132.0" styleClass="buttonDel" stylesheets="@application.css" text="Thoát" />
+                        <Label layoutX="53.0" layoutY="308.0" prefHeight="39.0" prefWidth="290.0" text="Mã đăng nhập:">
+                           <font>
+                              <Font name="UTM Avo" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="53.0" layoutY="391.0" text="Mật khẩu:">
+                           <font>
+                              <Font name="UTM Avo" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="54.0" layoutY="177.0" prefHeight="178.0" prefWidth="290.0" text="vào hệ thống yamas">
+                           <font>
+                              <Font name="UTM Neutra" size="24.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="115.0" layoutY="137.0" prefHeight="178.0" prefWidth="228.0" text="Đăng nhập ">
+                           <font>
+                              <Font name="UTM Neutra" size="24.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="26.0" fitWidth="32.0" layoutX="317.0" layoutY="341.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/user.png" />
+                           </image>
+                        </ImageView>
+                        <JFXPasswordField fx:id="txtMatKhau" focusColor="#f6931e" layoutX="47.0" layoutY="416.0" prefHeight="26.0" prefWidth="290.0" text="456231" unFocusColor="#f6931e" />
+                        <ImageView fitHeight="26.0" fitWidth="32.0" layoutX="312.0" layoutY="413.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/padlock.png" />
+                           </image>
+                        </ImageView>
+                        <AnchorPane layoutX="395.0" layoutY="70.0" prefHeight="600.0" prefWidth="536.0" />
+                        <ImageView fitHeight="194.0" fitWidth="159.0" layoutX="119.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/logomini.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblLGStatus" layoutX="47.0" layoutY="460.0" prefHeight="40.0" prefWidth="290.0" text="Label" textFill="RED" wrapText="true" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+      <BorderPane fx:id="MenuPane" layoutX="2.0" layoutY="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="858.0" prefWidth="1600.0">
+         <left>
+            <AnchorPane maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="664.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <children>
+                  <AnchorPane prefHeight="666.0" prefWidth="200.0">
+                     <children>
+                        <VBox fx:id="vboxListView" prefHeight="767.0" prefWidth="202.0">
+                           <children>
+                              <Label maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="36.0" prefWidth="202.0" style="-fx-background-color: #000000;" text="        Các chức năng chính" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold Italic" size="14.0" />
+                                 </font>
+                              </Label>
+                              <JFXListView fx:id="jlistView" onMouseClicked="#ChuyenChucNang" prefHeight="697.0" prefWidth="200.0" scaleShape="false" styleClass="custom-jfx-list-view" stylesheets="@application2.css" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <opaqueInsets>
+                        <Insets left="10.0" />
+                     </opaqueInsets>
+                  </AnchorPane>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </AnchorPane>
+         </left>
+         <top>
+            <AnchorPane prefHeight="64.0" prefWidth="1594.0" style="-fx-background-color: #F2F2F2;" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="lblTenNVLogin" layoutX="1207.0" layoutY="25.0" prefHeight="22.0" prefWidth="180.0" text="Lưu Tuấn Kha">
+                     <font>
+                        <Font name="UTM Avo Italic" size="14.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="24.0" fitWidth="24.0" layoutX="1175.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/user.png" />
+                     </image>
+                  </ImageView>
+                  <JFXButton fx:id="btnDangXuat" layoutX="1402.0" layoutY="18.0" prefHeight="30.0" prefWidth="97.0" style="-fx-background-color: #f6931e;" text="Đăng xuất" textFill="WHITE">
+                     <font>
+                        <Font name="UTMAvoBold" size="12.0" />
+                     </font>
+                  </JFXButton>
+                  <JFXButton fx:id="btnQuayLai" layoutX="21.0" layoutY="21.0" prefHeight="30.0" prefWidth="99.0" style="-fx-background-color: #E8005C;" text="Quay lại" textFill="WHITE">
+                     <font>
+                        <Font name="UTMAvoBold" size="12.0" />
+                     </font>
+                  </JFXButton>
+               </children>
+            </AnchorPane>
+         </top>
+         <center>
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="794.0" prefWidth="1400.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+               <opaqueInsets>
+                  <Insets top="10.0" />
+               </opaqueInsets>
+               <children>
+                  <AnchorPane fx:id="manHinhLamViecChinh" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="796.0" prefWidth="1399.0" style="-fx-background-color: #ffffff;" AnchorPane.leftAnchor="-10.0">
+                     <children>
+                        <JFXButton fx:id="btnChucNang1" ellipsisString="" layoutX="409.0" layoutY="142.0" prefHeight="250.0" prefWidth="250.0" styleClass="buttonMenu" stylesheets="@application2.css" text="Button" />
+                        <JFXButton fx:id="btnChucNang2" ellipsisString="" layoutX="716.0" layoutY="143.0" prefHeight="250.0" prefWidth="250.0" styleClass="buttonMenu" stylesheets="@application2.css" text="Button" />
+                        <JFXButton fx:id="btnChucNang3" ellipsisString="" layoutX="409.0" layoutY="449.0" prefHeight="250.0" prefWidth="250.0" styleClass="buttonMenu" stylesheets="@application2.css" text="Button" />
+                        <JFXButton fx:id="btnChucNang4" ellipsisString="" layoutX="716.0" layoutY="449.0" prefHeight="250.0" prefWidth="250.0" styleClass="buttonMenu" stylesheets="@application2.css" text="Button" />
+                        <Label layoutX="641.0" layoutY="56.0" prefHeight="18.0" prefWidth="470.0" text="Các chức năng khác">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="QLKhachHangPane" layoutX="21.0" layoutY="21.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="805.0" prefWidth="1410.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane layoutY="-10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1414.0" style="-fx-background-color: #F2F2F2;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="-10.0">
+                           <children>
+                              <Label layoutX="74.0" layoutY="74.0" prefHeight="18.0" prefWidth="201.0" text="Số CMND / Thẻ căn cước:" />
+                              <JFXTextField fx:id="txtsoCMNDQLKH" focusColor="#f52020" layoutX="74.0" layoutY="92.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="363.0" layoutY="73.0" prefHeight="18.0" prefWidth="201.0" text="Họ đệm khách hàng:" />
+                              <JFXTextField fx:id="txthoQLKH" focusColor="#f52020" layoutX="363.0" layoutY="91.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="74.0" layoutY="138.0" prefHeight="18.0" prefWidth="201.0" text="Số điện thoại:" />
+                              <JFXTextField fx:id="txtSoDTQLKH" focusColor="RED" layoutX="74.0" layoutY="156.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="363.0" layoutY="137.0" prefHeight="18.0" prefWidth="201.0" text="Địa chỉ thường trú:" />
+                              <JFXTextField fx:id="txtDiaChiQLKH" focusColor="RED" layoutX="363.0" layoutY="155.0" prefHeight="26.0" prefWidth="846.0" unFocusColor="RED" />
+                              <Label layoutX="683.0" layoutY="73.0" prefHeight="18.0" prefWidth="201.0" text="Tên khách hàng:" />
+                              <JFXTextField fx:id="txttenQLKH" focusColor="RED" layoutX="680.0" layoutY="91.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="1009.0" layoutY="72.0" prefHeight="18.0" prefWidth="201.0" text="Giới tính:" />
+                              <JFXTextField fx:id="txtgioiTinhQLKH" focusColor="RED" layoutX="1009.0" layoutY="90.0" prefHeight="26.0" prefWidth="200.0" unFocusColor="RED" />
+                              <Label layoutX="534.0" layoutY="24.0" prefHeight="30.0" prefWidth="250.0" styleClass="header" stylesheets="@../thongTinCaNhan/application2.css" text="QUẢN LÝ KHÁCH HÀNG">
+                                 <font>
+                                    <Font name="UTM Avo Bold Italic" size="18.0" />
+                                 </font>
+                              </Label>
+                              <JFXButton fx:id="btnThemKHVaoHD" layoutX="76.0" layoutY="24.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #f6931e;" text="Thêm vào hoá đơn" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnLuu12" layoutX="170.0" layoutY="724.0" prefHeight="31.0" prefWidth="132.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Lưu ">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnXoaTrang12" layoutX="431.0" layoutY="724.0" prefHeight="31.0" prefWidth="198.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Thêm khách hàng">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnHoanTac12" layoutX="698.0" layoutY="724.0" prefHeight="31.0" prefWidth="175.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Hoàn tác">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <AnchorPane layoutX="10.0" layoutY="210.0" prefHeight="442.0" prefWidth="1367.0">
+                                 <children>
+                                    <TableView fx:id="tableQLKhachHang" layoutX="-9.0" layoutY="128.0" prefHeight="442.0" prefWidth="1328.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="39.0" AnchorPane.topAnchor="0.0">
+                                       <columns>
+                                          <TableColumn fx:id="soCMNDCol" prefWidth="195.0" text="Số CMND / Thẻ căn cước" />
+                                          <TableColumn fx:id="tenSP11" prefWidth="400.0" text="Tên khách hàng">
+                                             <columns>
+                                                <TableColumn fx:id="hoKHCol" minWidth="1.5999755859375" prefWidth="195.0" text="Họ đệm" />
+                                                <TableColumn fx:id="tenKHCol" prefWidth="195.0" text="Tên" />
+                                             </columns>
+                                          </TableColumn>
+                                          <TableColumn fx:id="gioiTinhKHCol" prefWidth="195.0" text="Giới tính" />
+                                          <TableColumn fx:id="sDTKHCol" prefWidth="195.0" text="Số điện thoại" />
+                                          <TableColumn fx:id="diaChiKHCol" prefWidth="350.0" text="Địa chỉ" />
+                                       </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="ThongKePane" layoutX="10.0" layoutY="20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="794.4" prefWidth="1400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane layoutY="-10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1414.0" style="-fx-background-color: #F2F2F2;">
+                           <children>
+                              <AnchorPane layoutX="29.0" layoutY="58.0" style="-fx-border-color: #f6931e; -fx-border-radius: 20;" />
+                              <Label layoutX="495.0" layoutY="14.0" prefHeight="30.0" prefWidth="302.0" styleClass="header" stylesheets="@../thongTinCaNhan/application2.css" text="Thống kê kinh doanh">
+                                 <font>
+                                    <Font name="UTM Avo Bold Italic" size="18.0" />
+                                 </font>
+                              </Label>
+                              <JFXButton fx:id="btnLuu111" layoutX="138.0" layoutY="757.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Lưu">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnXoaTrang111" layoutX="596.0" layoutY="757.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Xoá trắng">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnHoanTac111" layoutX="1051.0" layoutY="757.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Hoàn tác">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="1111.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true" />
+                              <JFXButton fx:id="btnXoaTrang1111" layoutX="824.0" layoutY="757.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Xoá ">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXTextField fx:id="txtSearch11" focusColor="#f6931e" layoutX="1049.0" layoutY="23.0" prefHeight="26.0" prefWidth="169.0" unFocusColor="#8f8d8d" />
+                              <ImageView fitHeight="26.0" fitWidth="16.0" layoutX="1201.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/search%20(2).png" />
+                                 </image>
+                              </ImageView>
+                              <JFXButton fx:id="btnTimKiem11" layoutX="1229.0" layoutY="23.0" prefHeight="16.0" prefWidth="59.0" style="-fx-background-color: #f6931e;" text="Tìm" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnXoaTrang1121" layoutX="358.0" layoutY="756.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Thêm">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXDatePicker layoutX="130.0" layoutY="96.0" prefWidth="200.0" />
+                              <Label layoutX="134.0" layoutY="79.0" prefHeight="18.0" prefWidth="200.0" text="Từ ngày:" />
+                              <JFXDatePicker layoutX="369.0" layoutY="96.0" prefWidth="200.0" />
+                              <Label layoutX="373.0" layoutY="79.0" prefHeight="18.0" prefWidth="200.0" text="Đến ngày:" />
+                              <StackedBarChart layoutX="130.0" layoutY="160.0" prefHeight="289.0" prefWidth="372.0">
+                                <xAxis>
+                                  <CategoryAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis side="LEFT" />
+                                </yAxis>
+                              </StackedBarChart>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="ThongTinCaNhan" layoutX="1.0" layoutY="1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="805.0" prefWidth="1410.0" style="-fx-background-color: #000000;">
+                     <children>
+                        <AnchorPane layoutY="-10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1414.0" style="-fx-background-color: #F2F2F2;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="-10.0">
+                           <children>
+                              <Label layoutX="360.0" layoutY="202.0" prefHeight="18.0" prefWidth="102.0" text="Mã nhân viên:" />
+                              <JFXTextField fx:id="txtMaNVTT" editable="false" focusColor="#f52020" layoutX="360.0" layoutY="220.0" prefHeight="26.0" prefWidth="165.0" unFocusColor="BLACK" />
+                              <Label layoutX="554.0" layoutY="201.0" prefHeight="18.0" prefWidth="102.0" text="Mật khẩu:" />
+                              <JFXTextField fx:id="txtMatKhauNVTT" focusColor="#f6931e" layoutX="554.0" layoutY="219.0" prefHeight="26.0" prefWidth="171.0" unFocusColor="BLACK" />
+                              <Label layoutX="360.0" layoutY="301.0" prefHeight="18.0" prefWidth="102.0" text="Họ đệm:" />
+                              <JFXTextField fx:id="txtHoNVTT" focusColor="#f6931e" layoutX="360.0" layoutY="319.0" prefHeight="26.0" prefWidth="165.0" unFocusColor="BLACK" />
+                              <Label layoutX="554.0" layoutY="300.0" prefHeight="18.0" prefWidth="102.0" text="Tên:" />
+                              <JFXTextField fx:id="txtTenNVTT" focusColor="#f6931e" layoutX="554.0" layoutY="318.0" prefHeight="26.0" prefWidth="171.0" unFocusColor="BLACK" />
+                              <Label layoutX="360.0" layoutY="397.0" prefHeight="18.0" prefWidth="102.0" text="Địa chỉ:" />
+                              <JFXTextField fx:id="txtDiaChiNVTT" focusColor="#f6931e" layoutX="360.0" layoutY="415.0" prefHeight="26.0" prefWidth="506.0" unFocusColor="BLACK" />
+                              <Label layoutX="892.0" layoutY="397.0" prefHeight="18.0" prefWidth="102.0" text="Giới tính :" />
+                              <JFXTextField fx:id="txtGioiTinhNVTT" focusColor="#f6931e" layoutX="892.0" layoutY="415.0" prefHeight="26.0" prefWidth="120.0" unFocusColor="BLACK" />
+                              <Label layoutX="755.0" layoutY="201.0" prefHeight="18.0" prefWidth="102.0" text="Chức vụ:" />
+                              <JFXTextField fx:id="txtChucVuNVTT" editable="false" focusColor="#f52020" layoutX="752.0" layoutY="219.0" prefHeight="26.0" prefWidth="117.0" unFocusColor="BLACK" />
+                              <Label layoutX="897.0" layoutY="200.0" prefHeight="18.0" prefWidth="102.0" text="Lương:" />
+                              <JFXTextField fx:id="txtLuongNVTT" editable="false" focusColor="#f52020" layoutX="897.0" layoutY="218.0" prefHeight="26.0" prefWidth="120.0" unFocusColor="BLACK" />
+                              <Label layoutX="752.0" layoutY="299.0" prefHeight="18.0" prefWidth="102.0" text="Ca làm: " />
+                              <JFXTextField fx:id="txtCaLamNVTT" editable="false" focusColor="#f52020" layoutX="749.0" layoutY="317.0" prefHeight="26.0" prefWidth="117.0" unFocusColor="BLACK" />
+                              <Label layoutX="894.0" layoutY="298.0" prefHeight="18.0" prefWidth="102.0" text="Ngày vào làm:" />
+                              <JFXTextField fx:id="txtNgayVaoLamNVTT" editable="false" focusColor="#f52020" layoutX="894.0" layoutY="316.0" prefHeight="26.0" prefWidth="120.0" unFocusColor="BLACK" />
+                              <JFXButton fx:id="btnLuu" layoutX="360.0" layoutY="499.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Lưu thay đổi">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnXoaTrang" layoutX="621.0" layoutY="499.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Xoá trắng">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnHoanTac" layoutX="888.0" layoutY="499.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Hoàn tác">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <Label layoutX="593.0" layoutY="113.0" styleClass="header" stylesheets="@../thongTinCaNhan/application2.css" text="THÔNG TIN CÁ NHÂN">
+                                 <font>
+                                    <Font name="UTM Avo Bold Italic" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="themHoaDon" layoutX="11.0" layoutY="11.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="805.0" prefWidth="1410.0">
+                     <children>
+                        <AnchorPane layoutY="-10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1414.0" style="-fx-background-color: #F2F2F2;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="-10.0">
+                           <children>
+                              <Label layoutX="74.0" layoutY="74.0" prefHeight="18.0" prefWidth="201.0" text="Mã hoá đơn:" />
+                              <JFXTextField fx:id="txtMaLHD" editable="false" focusColor="#f52020" layoutX="74.0" layoutY="92.0" prefHeight="26.0" prefWidth="201.0" text="-Tự động tạo-" unFocusColor="RED" />
+                              <Label layoutX="363.0" layoutY="73.0" prefHeight="18.0" prefWidth="201.0" text="Mã nhân viên lập hoá đơn:" />
+                              <JFXTextField fx:id="txtMaNVLHD" editable="false" focusColor="#f52020" layoutX="363.0" layoutY="91.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="74.0" layoutY="173.0" prefHeight="18.0" prefWidth="201.0" text="Họ đệm khách hàng: :" />
+                              <JFXTextField fx:id="txtHoKHLHD" editable="false" focusColor="RED" layoutX="74.0" layoutY="191.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="363.0" layoutY="172.0" prefHeight="18.0" prefWidth="201.0" text="Tên khách hàng:" />
+                              <JFXTextField fx:id="txtTenKHLHD" editable="false" focusColor="RED" layoutX="363.0" layoutY="190.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="683.0" layoutY="73.0" prefHeight="18.0" prefWidth="201.0" text="Họ đệm nhân viên:" />
+                              <JFXTextField fx:id="txtHoNVLHD" editable="false" focusColor="RED" layoutX="680.0" layoutY="91.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="1009.0" layoutY="72.0" prefHeight="18.0" prefWidth="201.0" text="Tên nhân viên:" />
+                              <JFXTextField fx:id="txtTenNVLHD" editable="false" focusColor="RED" layoutX="1009.0" layoutY="90.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="680.0" layoutY="171.0" prefHeight="18.0" prefWidth="201.0" text="Số CMND:" />
+                              <JFXTextField fx:id="txtCMNDKHLHD" editable="false" focusColor="#f52020" layoutX="677.0" layoutY="189.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="1006.0" layoutY="170.0" prefHeight="18.0" prefWidth="201.0" text="Ngày lập hoá đơn:" />
+                              <JFXTextField fx:id="txtNgayLHD" editable="false" focusColor="#f52020" layoutX="1006.0" layoutY="188.0" prefHeight="26.0" prefWidth="201.0" unFocusColor="RED" />
+                              <Label layoutX="534.0" layoutY="24.0" styleClass="header" stylesheets="@../thongTinCaNhan/application2.css" text="TẠO HOÁ ĐƠN MỚI">
+                                 <font>
+                                    <Font name="UTM Avo Bold Italic" size="18.0" />
+                                 </font>
+                              </Label>
+                              <JFXButton fx:id="btnTTKH" layoutX="76.0" layoutY="24.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #f6931e;" text="Thông tin khách hàng" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnTaoHDMoi" layoutX="170.0" layoutY="724.0" prefHeight="31.0" prefWidth="132.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Tạo hoá đơn mới">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnXoaTrang1" layoutX="431.0" layoutY="724.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Hoàn tác">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnHoanTac1" layoutX="698.0" layoutY="724.0" prefHeight="30.0" prefWidth="123.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #000000;" text="Huỷ">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <AnchorPane layoutX="60.0" layoutY="254.0" prefHeight="442.0" prefWidth="1200.0">
+                                 <children>
+                                    <TableView fx:id="tableLapHoaDon" layoutX="-9.0" layoutY="128.0" prefHeight="322.0" prefWidth="851.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <columns>
+                                          <TableColumn fx:id="maGioHang1" prefWidth="200.0" text="Mã sản phẩm" />
+                                          <TableColumn fx:id="tenSP1" prefWidth="400.0" text="Tên sản phẩm" />
+                                          <TableColumn fx:id="soLuongGioHang1" minWidth="1.5999755859375" prefWidth="200.0" text="Số lượng mua" />
+                                          <TableColumn fx:id="donGiaGioHang1" prefWidth="200.0" text="Đơn giá (VNĐ)" />
+                                          <TableColumn fx:id="thanhTienGioHang1" prefWidth="200.0" text="Thành tiền (VNĐ)" />
+                                       </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                              <JFXButton fx:id="btnGioHangHD" layoutX="343.0" layoutY="24.0" prefHeight="30.0" prefWidth="150.0" style="-fx-background-color: #f6931e;" text="Giỏ hàng" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="timKiem_them_matHang" layoutX="12.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="794.4" prefWidth="1400.0" style="-fx-background-color: #000000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane layoutX="-10.0" layoutY="-9.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="806.0" prefWidth="1401.0" style="-fx-background-color: #F2F2F2;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <JFXTextField fx:id="txtSearch" focusColor="#f6931e" layoutX="625.0" layoutY="14.0" prefHeight="26.0" prefWidth="222.0" promptText="Tìm kiếm theo tên mặt hàng" unFocusColor="#8f8d8d" />
+                              <ImageView fitHeight="26.0" fitWidth="16.0" layoutX="830.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/search%20(2).png" />
+                                 </image>
+                              </ImageView>
+                              <JFXButton fx:id="btnTimKiem" layoutX="858.0" layoutY="14.0" prefHeight="16.0" prefWidth="59.0" style="-fx-background-color: #f6931e;" text="Tìm" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXComboBox fx:id="jcbLoaiXe" focusColor="#f6931e" layoutX="34.0" layoutY="81.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <JFXComboBox fx:id="jcbPhanKhoi" focusColor="#f6931e" layoutX="263.0" layoutY="81.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <JFXComboBox fx:id="jcbMauSac" focusColor="#f6931e" layoutX="501.0" layoutY="81.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <JFXComboBox fx:id="jcbGiaThanh" focusColor="#f6931e" layoutX="733.0" layoutY="81.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <Label layoutX="41.0" layoutY="67.0" prefHeight="18.0" prefWidth="85.0" text="Loại xe:">
+                                 <font>
+                                    <Font name="UTM Avo" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="263.0" layoutY="65.0" prefHeight="18.0" prefWidth="85.0" text="Phân khối:">
+                                 <font>
+                                    <Font name="UTM Avo" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="505.0" layoutY="65.0" prefHeight="18.0" prefWidth="85.0" text="Màu sắc:" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="UTM Avo" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="736.0" layoutY="67.0" prefHeight="18.0" prefWidth="85.0" text="Giá thành:">
+                                 <font>
+                                    <Font name="UTM Avo" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblTrangThaiThemSP" layoutX="34.0" layoutY="749.0" prefHeight="18.0" prefWidth="670.0" text="*Trạng thái" textFill="RED" />
+                              <AnchorPane layoutX="32.0" layoutY="137.0" prefHeight="603.0" prefWidth="881.0" style="-fx-border-color: #f6931e;">
+                                 <children>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" layoutX="2.0" layoutY="1.0" prefHeight="472.0" prefWidth="909.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <content>
+                                          <FlowPane fx:id="paneSanPham" prefHeight="574.0" prefWidth="906.0" />
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane fx:id="gioHang" layoutX="941.0" layoutY="9.0" prefHeight="731.0" prefWidth="404.0" style="-fx-border-color: #000000; -fx-background-color: #F2F2F2;">
+                                 <children>
+                                    <VBox layoutX="2.0" layoutY="10.0" prefHeight="479.0" prefWidth="399.0" spacing="5.0">
+                                       <children>
+                                          <Label fx:id="lblmaSp1" prefHeight="23.0" prefWidth="283.0" stylesheets="@../timKiemMatHang/application2.css" text="CÁC MẶT HÀNG ĐÃ CHỌN" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets left="90.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <AnchorPane prefHeight="670.0" prefWidth="306.0">
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <children>
+                                                <TableView fx:id="tableGioHang" layoutY="24.0" prefHeight="574.0" prefWidth="398.0" AnchorPane.bottomAnchor="95.0" AnchorPane.leftAnchor="-4.0">
+                                                  <columns>
+                                                    <TableColumn fx:id="maGioHang" prefWidth="100.0" text="Mã mặt hàng" />
+                                                    <TableColumn fx:id="soLuongGioHang" minWidth="0.0" prefWidth="100.0" text="Số lượng" />
+                                                      <TableColumn fx:id="donGiaGioHang" prefWidth="100.0" text="Đơn giá" />
+                                                      <TableColumn fx:id="thanhTienGioHang" prefWidth="100.0" text="Tổng tiền" />
+                                                  </columns>
+                                                </TableView>
+                                                <Label layoutX="29.0" layoutY="592.0" prefHeight="18.0" prefWidth="106.0" text="Tổng tiền (VNĐ): ">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label fx:id="lblTongTienGH" layoutX="144.0" layoutY="592.0" prefHeight="18.0" prefWidth="222.0" text="0" textFill="RED">
+                                                   <font>
+                                                      <Font name="System Bold" size="11.0" />
+                                                   </font>
+                                                </Label>
+                                                <JFXButton fx:id="btnXoaSPGioHang" layoutX="25.0" layoutY="624.0" prefHeight="30.0" prefWidth="161.0" style="-fx-background-color: #f6931e;" text="Xoá mặt hàng" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="UTMAvoBold" size="12.0" />
+                                                   </font>
+                                                </JFXButton>
+                                                <JFXButton fx:id="btnXoaGioHang" layoutX="207.0" layoutY="624.0" prefHeight="30.0" prefWidth="161.0" style="-fx-background-color: #f6931e;" text="Huỷ giỏ hàng" textFill="WHITE">
+                                                   <font>
+                                                      <Font name="UTMAvoBold" size="12.0" />
+                                                   </font>
+                                                </JFXButton>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                       <padding>
+                                          <Insets left="5.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                              <JFXButton fx:id="btnTaoHoaDon" layoutX="46.0" layoutY="9.0" prefHeight="30.0" prefWidth="161.0" style="-fx-background-color: #f6931e;" text="Tạo hoá đơn" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnGioHang" layoutX="443.0" layoutY="15.0" prefHeight="30.0" prefWidth="161.0" style="-fx-background-color: #f6931e;" text="Xem giỏ hàng" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <AnchorPane fx:id="chiTietSP" layoutX="940.0" layoutY="8.0" prefHeight="731.0" prefWidth="404.0" style="-fx-border-color: #000000; -fx-background-color: #F2F2F2;">
+                                 <children>
+                                    <VBox layoutX="2.0" layoutY="22.0" spacing="5.0">
+                                       <children>
+                                          <Label fx:id="lblmaSp" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Mã sản phẩm : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lbltenSp" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Tên sản phẩm : -Trống-" textFill="#f6931e" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblLoaiSp" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Loại sản phẩm : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblSoLuongSp" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Số lượng : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblDungTichBXSp" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Dung tích bình xăng  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblDungTichDMSp" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Dung tích dầu may  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblHeThongLyHopSp" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Hệ thống ly hợp  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblMoTaSp" alignment="TOP_LEFT" contentDisplay="TEXT_ONLY" prefHeight="50.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Mô tả  : -trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblMauSp" layoutX="10.0" layoutY="178.0" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Màu  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblDongCoSp" layoutX="15.0" layoutY="234.0" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Động cơ  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblKichThuocSp" alignment="TOP_LEFT" layoutX="15.0" layoutY="587.0" prefHeight="50.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Kích thước  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblKhungSp" layoutX="15.0" layoutY="615.0" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Khung xe  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lblGiaSp" layoutX="15.0" layoutY="643.0" prefHeight="18.0" prefWidth="380.0" stylesheets="@../timKiemMatHang/application2.css" text="Đơn giá  : -Trống-" wrapText="true">
+                                             <font>
+                                                <Font name="UTMAvoBold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <AnchorPane prefHeight="322.0" prefWidth="598.0">
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <children>
+                                                <ImageView fx:id="imgViewBIG" fitHeight="320.0" fitWidth="380.0" layoutX="1.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../../../../../new6.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                       <padding>
+                                          <Insets left="5.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane fx:id="QLSanPham" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="805.0" prefWidth="1410.0">
+                     <children>
+                        <AnchorPane layoutY="-10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1414.0" style="-fx-background-color: #F2F2F2;" AnchorPane.bottomAnchor="-0.0" AnchorPane.leftAnchor="-10.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="-10.0">
+                           <children>
+                              <AnchorPane layoutX="29.0" layoutY="58.0" style="-fx-border-color: #f6931e; -fx-border-radius: 20;">
+                                 <children>
+                                    <AnchorPane fx:id="themSPPane" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                                       <children>
+                                          <Label layoutY="4.0" prefHeight="18.0" prefWidth="102.0" text="Mã mặt hàng:" />
+                                          <JFXTextField fx:id="lblMaMatHangQLSP" editable="false" focusColor="#f52020" layoutY="22.0" prefHeight="26.0" prefWidth="98.0" unFocusColor="BLACK" />
+                                          <Label layoutX="121.0" layoutY="3.0" prefHeight="18.0" prefWidth="132.0" text="Tên mặt hàng:" />
+                                          <JFXTextField fx:id="lblTenMatHangQLSP" focusColor="#f6931e" layoutX="121.0" layoutY="21.0" prefHeight="26.0" prefWidth="171.0" unFocusColor="BLACK" />
+                                          <Label layoutY="67.0" prefHeight="18.0" prefWidth="146.0" text="Kích thước:" />
+                                          <JFXTextField fx:id="lblKichThuocMatHangQLSP" focusColor="#f6931e" layoutY="85.0" prefHeight="26.0" prefWidth="242.0" unFocusColor="BLACK" />
+                                          <Label layoutX="260.0" layoutY="66.0" prefHeight="18.0" prefWidth="102.0" text="Ly động:" />
+                                          <JFXTextField fx:id="lblLyDongMatHangQLSP" focusColor="#f6931e" layoutX="260.0" layoutY="84.0" prefHeight="26.0" prefWidth="150.0" unFocusColor="BLACK" />
+                                          <Label layoutX="317.0" layoutY="3.0" prefHeight="18.0" prefWidth="102.0" text="Loại mặt hàng:" />
+                                          <JFXTextField fx:id="lblLoaiMatHangQLSP" editable="false" focusColor="#f52020" layoutX="314.0" layoutY="21.0" prefHeight="26.0" prefWidth="117.0" unFocusColor="BLACK" />
+                                          <Label layoutX="459.0" layoutY="2.0" prefHeight="18.0" prefWidth="102.0" text="Số lượng:" />
+                                          <JFXTextField fx:id="lblSoLuongMatHangQLSP" editable="false" focusColor="#f52020" layoutX="459.0" layoutY="20.0" prefHeight="26.0" prefWidth="100.0" unFocusColor="BLACK" />
+                                          <Label layoutX="429.0" layoutY="65.0" prefHeight="18.0" prefWidth="102.0" text="Màu xe:" />
+                                          <JFXTextField fx:id="lblMauXeQLSP" editable="false" focusColor="#f52020" layoutX="426.0" layoutY="83.0" prefHeight="26.0" prefWidth="106.0" unFocusColor="BLACK" />
+                                          <Label layoutX="545.0" layoutY="64.0" prefHeight="18.0" prefWidth="102.0" text="Động cơ:" />
+                                          <JFXTextField fx:id="lblDongCoMatHangQLSP" editable="false" focusColor="#f52020" layoutX="545.0" layoutY="82.0" prefHeight="26.0" prefWidth="120.0" unFocusColor="BLACK" />
+                                          <Label layoutX="580.0" layoutY="1.0" prefHeight="18.0" prefWidth="102.0" text="Đơn giá:" />
+                                          <JFXTextField fx:id="lblDonGiaMatHangQLSP" editable="false" focusColor="#f52020" layoutX="577.0" layoutY="19.0" prefHeight="26.0" prefWidth="117.0" unFocusColor="BLACK" />
+                                          <Label layoutX="722.0" prefHeight="18.0" prefWidth="132.0" text="Dung tích bình xăng:" />
+                                          <JFXTextField fx:id="lblBinhXangMatHangQLSP" editable="false" focusColor="#f52020" layoutX="722.0" layoutY="18.0" prefHeight="26.0" prefWidth="120.0" unFocusColor="BLACK" />
+                                          <Label layoutX="684.0" layoutY="63.0" prefHeight="18.0" prefWidth="102.0" text="Khung xe:" />
+                                          <JFXTextField fx:id="lblKhungXeMatHangQLSP" editable="false" focusColor="#f52020" layoutX="681.0" layoutY="81.0" prefHeight="26.0" prefWidth="117.0" unFocusColor="BLACK" />
+                                          <Label layoutX="823.0" layoutY="62.0" prefHeight="18.0" prefWidth="102.0" text="Mô tả:" />
+                                          <JFXTextField fx:id="lblMoTaMatHangQLSP" editable="false" focusColor="#f52020" layoutX="823.0" layoutY="80.0" prefHeight="26.0" prefWidth="197.0" unFocusColor="BLACK" />
+                                          <Label layoutX="859.0" prefHeight="18.0" prefWidth="132.0" text="Dầu máy:" />
+                                          <JFXTextField fx:id="lblDauMayMatHangQLSP" editable="false" focusColor="#f52020" layoutX="859.0" layoutY="18.0" prefHeight="26.0" prefWidth="159.0" unFocusColor="BLACK" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </AnchorPane>
+                              <Label layoutX="495.0" layoutY="14.0" prefHeight="30.0" prefWidth="210.0" styleClass="header" stylesheets="@../thongTinCaNhan/application2.css" text="QUẢN LÝ MẶT HÀNG">
+                                 <font>
+                                    <Font name="UTM Avo Bold Italic" size="18.0" />
+                                 </font>
+                              </Label>
+                              <JFXButton fx:id="btnLuuQLSP" layoutX="138.0" layoutY="757.0" prefHeight="30.0" prefWidth="123.0" stylesheets="@application.css" text="Lưu">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnXoaTrangQLSP" layoutX="850.0" layoutY="757.0" prefHeight="30.0" prefWidth="123.0" stylesheets="@application.css" text="Xoá trắng">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnHoanTacQLSP" layoutX="1088.0" layoutY="757.0" prefHeight="30.0" prefWidth="123.0" stylesheets="@application.css" text="Hoàn tác">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <AnchorPane layoutX="21.0" layoutY="275.0" prefHeight="311.0" prefWidth="1300.0">
+                                 <children>
+                                    <TableView fx:id="tableQLSP" prefHeight="422.0" prefWidth="1300.0">
+                                       <columns>
+                                          <TableColumn fx:id="CountSPCol" prefWidth="75.0" text="STT" />
+                                          <TableColumn fx:id="maSPCol" prefWidth="100.0" text="Mã sản phẩm" />
+                                          <TableColumn fx:id="tenSPCol" prefWidth="200.0" text="Tên sản phẩm" />
+                                          <TableColumn fx:id="soLuongSPCol" minWidth="1.5999755859375" prefWidth="75.20001220703125" text="Số lượng" />
+                                          <TableColumn fx:id="donGiaSPCol" prefWidth="200.0" text="Đơn giá (VNĐ)" />
+                                          <TableColumn fx:id="loaiSPCol" prefWidth="150.0" text="Loại" />
+                                          <TableColumn fx:id="binhXangSPCol" prefWidth="150.0" text="Bình xăng" />
+                                          <TableColumn fx:id="dauMaySPCol" prefWidth="150.0" text="Dầu máy" />
+                                          <TableColumn fx:id="lyDongSPCol" prefWidth="150.0" text="Ly động" />
+                                          <TableColumn fx:id="mauXeSPCol" prefWidth="150.0" text="Màu xe" />
+                                          <TableColumn fx:id="dongCoSPCol" prefWidth="150.0" text="Động cơ" />
+                                          <TableColumn fx:id="kichThuocSPCol" prefWidth="150.0" text="Kích thước" />
+                                          <TableColumn fx:id="khungXeSPCol" prefWidth="150.0" text="Khung xe" />
+                                          <TableColumn fx:id="moTaCol" prefWidth="150.0" text="Mô tả" />
+                                          <TableColumn fx:id="hinhAnhSPCol" prefWidth="200.0" text="Hình ảnh" />
+                                       </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                              <JFXButton fx:id="btnFirst" layoutX="544.0" layoutY="712.0" prefHeight="30.0" prefWidth="50.0" style="-fx-border-color: #000000;" styleClass="buttonMenu" stylesheets="@application2.css" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnLeft" layoutX="594.0" layoutY="712.0" prefHeight="30.0" prefWidth="50.0" style="-fx-border-color: #000000;" styleClass="buttonMenu" stylesheets="@application2.css" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnRight" layoutX="716.0" layoutY="712.0" prefHeight="30.0" prefWidth="50.0" style="-fx-border-color: #000000;" styleClass="buttonMenu" stylesheets="@application2.css" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnLast" layoutX="766.0" layoutY="712.0" prefHeight="30.0" prefWidth="50.0" style="-fx-border-color: #000000;" styleClass="buttonMenu" stylesheets="@application2.css" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXButton fx:id="btnThemHinhAnhQLSP" layoutX="1111.0" layoutY="11.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #f6931e;" text="Thêm hình ảnh" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <ImageView fx:id="imgViewQLSP" fitHeight="150.0" fitWidth="200.0" layoutX="1111.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true" />
+                              <JFXButton fx:id="btnXoaQLSP" layoutX="620.0" layoutY="756.0" prefHeight="30.0" prefWidth="123.0" styleClass="buttonDel" stylesheets="@application.css" text="Xoá ">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXTextField fx:id="txtSearchQLSP" focusColor="#f6931e" layoutX="1016.0" layoutY="236.0" prefHeight="26.0" prefWidth="235.0" promptText="Nhập tên sản phẩm" unFocusColor="#8f8d8d" />
+                              <ImageView fitHeight="26.0" fitWidth="16.0" layoutX="1233.0" layoutY="245.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/search%20(2).png" />
+                                 </image>
+                              </ImageView>
+                              <JFXButton fx:id="btnSearchQLSP" layoutX="1261.0" layoutY="236.0" prefHeight="16.0" prefWidth="59.0" style="-fx-background-color: #f6931e;" text="Tìm" textFill="WHITE">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                              <JFXComboBox fx:id="jcbLoaiXe1" focusColor="#f6931e" layoutX="22.0" layoutY="236.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <JFXComboBox fx:id="jcbPhanKhoi1" focusColor="#f6931e" layoutX="273.0" layoutY="236.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <JFXComboBox fx:id="jcbMauSac1" focusColor="#f6931e" layoutX="530.0" layoutY="236.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <JFXComboBox fx:id="jcbGiaThanh1" focusColor="#f6931e" layoutX="812.0" layoutY="236.0" prefHeight="26.0" prefWidth="180.0" unFocusColor="#f6931e" />
+                              <Label layoutX="29.0" layoutY="222.0" prefHeight="18.0" prefWidth="85.0" text="Loại xe:">
+                                 <font>
+                                    <Font name="UTM Avo" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="273.0" layoutY="220.0" prefHeight="18.0" prefWidth="85.0" text="Phân khối:">
+                                 <font>
+                                    <Font name="UTM Avo" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="534.0" layoutY="220.0" prefHeight="18.0" prefWidth="85.0" text="Màu sắc:">
+                                 <font>
+                                    <Font name="UTM Avo" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="815.0" layoutY="222.0" prefHeight="18.0" prefWidth="85.0" text="Giá thành:">
+                                 <font>
+                                    <Font name="UTM Avo" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="trangThaiQLMatHang" layoutX="21.0" layoutY="704.0" prefHeight="18.0" prefWidth="521.0" text="Trạng thái:" textFill="RED" />
+                              <Label fx:id="lblPageQLSP" layoutX="656.0" layoutY="719.0" prefHeight="18.0" prefWidth="33.0" text="01/10" />
+                              <JFXCheckBox fx:id="cbDonGiaQLSP" checkedColor="#f6931e" layoutX="973.0" layoutY="718.0" prefHeight="18.0" prefWidth="213.0" text="Hiển thị dữ ô Đơn giá dạng tiền (Không thể sửa)" />
+                              <JFXButton fx:id="btnThemQLSP" layoutX="378.0" layoutY="756.0" prefHeight="30.0" prefWidth="123.0" stylesheets="@application.css" text="Thêm">
+                                 <font>
+                                    <Font name="UTMAvoBold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

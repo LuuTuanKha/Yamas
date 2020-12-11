@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="${project}/" cssToBin="true">
+  <deploy>
+    <application name="test" mainclass="timKiemMatHang.Main_timKiemMatHang" version="2020.11.4" toolkit="fx"/>
+    <info title="Yamas" vendor="Yamas"/>
+  </deploy>
+  <signjar/>
+</anttasks:AntTask>
