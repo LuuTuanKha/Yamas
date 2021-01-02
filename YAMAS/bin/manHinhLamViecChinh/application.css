@@ -3,6 +3,14 @@
     Created on : 11 Nov, 2017, 4:42:53 AM
     Author     : afsal villan
 */
+* {
+    -fx-primary : #FFFFFF;
+    -fx-secondary :  #f6931e;
+    -fx-primarytext : #000000;
+    -fx-blue: #1976D2;
+    -fx-red: #FF0000;
+    -fx-color-1:#1976D2;
+}
 .tree-cell{
 	-fx-padding: 0.5em 0em 0.5em 0em ;
 	-fx-font-size: 13;
@@ -32,13 +40,26 @@
 .img-view:selected {
     -fx-stroke: #26A0DA;
 }
-.combo-box {
-    -fx-pref-width: 150;
+.combo-box1 {
+	-fx-text-fill: -fx-primarytext;
+    
+}
+.combo-box1:hover {
+	-fx-font-weight: bold ;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+    
+}
+.combo-box1:selected {
+    
+    -fx-background-color: -fx-primarytext;
+    -fx-text-fill: white;
 }
 
 /** Size the combo-box drop down list. */
 .combo-box-popup > .list-view {
-    -fx-pref-width: 150;
+    
+    
 }
 #ss {
 	-fx-background-color: -fx-primary;
@@ -46,14 +67,7 @@
 	
 	}
 	
-* {
-    -fx-primary : #FFFFFF;
-    -fx-secondary :  #f6931e;
-    -fx-primarytext : #000000;
-    -fx-blue: #1976D2;
-    -fx-red: #FF0000;
-    -fx-color-1:#1976D2;
-}
+
 .table-row-cell {
     -fx-cell-size: 30px;
 }

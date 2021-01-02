@@ -1,12 +1,12 @@
 package entity;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class HoaDon {
 	private String maHoaDon;
 	private String soCMND;
 	private String maNV;
-	private java.sql.Date ngayLapHD;
+	private Date ngayLapHD;
 	private Double tongTien;
 	public String getMaHoaDon() {
 		return maHoaDon;

@@ -4,6 +4,7 @@ public class MatHang {
 	private String maMatHang;
 	private String tenMatHang;
 	private String maLoai;
+	private String DongXe;
 	private int soLuong;
 	private double binhXang;
 	private double dauMay;
@@ -15,6 +16,8 @@ public class MatHang {
 	private String khungxe;
 	private double dongia;
 	private String image;
+	private Double ThueBan;
+	
 	public String getMaMatHang() {
 		return maMatHang;
 	}
@@ -100,13 +103,33 @@ public class MatHang {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public MatHang(String maMatHang, String tenMatHang, String maLoai, int soLuong, double binhXang, double dauMay,
-			String lyDong, String moTa, String mauXe, double dongCo, String kichThuoc, String khungxe, double dongia,
-			String image) {
+	
+	
+	public String getDongXe() {
+		return DongXe;
+	}
+	public void setDongXe(String dongXe) {
+		DongXe = dongXe;
+	}
+	public Double getThueBan() {
+		return ThueBan;
+	}
+	public void setThueBan(Double thueBan) {
+		ThueBan = thueBan;
+	}
+	public MatHang() {
+		super();
+	}
+	
+	
+	public MatHang(String maMatHang, String tenMatHang, String maLoai, String dongXe, int soLuong, double binhXang,
+			double dauMay, String lyDong, String moTa, String mauXe, double dongCo, String kichThuoc, String khungxe,
+			double dongia, String image, Double thueBan) {
 		super();
 		this.maMatHang = maMatHang;
 		this.tenMatHang = tenMatHang;
 		this.maLoai = maLoai;
+		this.DongXe = dongXe;
 		this.soLuong = soLuong;
 		this.binhXang = binhXang;
 		this.dauMay = dauMay;
@@ -118,10 +141,8 @@ public class MatHang {
 		this.khungxe = khungxe;
 		this.dongia = dongia;
 		this.image = image;
-	}
+		this.ThueBan = thueBan;
 	
-	public MatHang() {
-		super();
 	}
 	@Override
 	public String toString() {
@@ -130,6 +151,7 @@ public class MatHang {
 				+ ", mauXe=" + mauXe + ", dongCo=" + dongCo + ", kichThuoc=" + kichThuoc + ", khungxe=" + khungxe
 				+ ", dongia=" + dongia + ", image=" + image + "]";
 	}
+
 	
 	
 	

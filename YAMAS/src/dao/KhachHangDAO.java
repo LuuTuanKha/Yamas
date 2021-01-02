@@ -53,7 +53,7 @@ public class KhachHangDAO {
 			String query = "SELECT TOP(15) [soCMND] ,[HoKH] ,[TenKH] ,[DiaChi] ,[SDT],[GioiTinh] FROM [dbo].[KhachHang]"
 
 					+ "WHERE [soCMND] is not null\r\n" + "ORDER BY [soCMND] DESC ";
-			System.out.println(query);
+			// System.out.println(query);
 			Statement state = conn.createStatement();
 			ResultSet rs = state.executeQuery(query);
 
@@ -86,43 +86,72 @@ public class KhachHangDAO {
 
 	}
 
+	public KhachHang getKhachHang_MaKH(String maKH) {
+		Connect_Data.getInstance();
+		Connection conn = Connect_Data.getConnection();
+		KhachHang kh = new KhachHang(maKH);
+		try {
+			String query = "SELECT   [HoKH] ,[TenKH], [SDT] FROM [dbo].[KhachHang]"
+
+					+ "WHERE [soCMND] =  \'" + maKH + "\' ";
+			// System.out.println(query);
+			Statement state = conn.createStatement();
+			ResultSet rs = state.executeQuery(query);
+
+			if (rs.next()) {
+		 
+				
+				kh.setSoCMND(maKH);
+				kh.setHoKH(rs.getString(1));
+				kh.setTenKH(rs.getString(2));
+				kh.setSoDT(rs.getString(3));
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return kh;
+
+	}
+
 	public int getDSKhachHang_Loc(JFXTextField txtsoCMNDQLKH, JFXTextField txttenQLKH, JFXTextField txthoQLKH,
 			JFXTextField txtgioiTinhQLKH, JFXTextField txtDiaChiQLKH, JFXTextField txtSoDTQLKH,
 			ObservableList<KhachHang> list, TableView<KhachHang> tableQLKH, int start, int end) {
 		Connect_Data.getInstance();
 		Connection conn = Connect_Data.getConnection();
-		
+
 		try {
 			String query = "USE [QLXeMay] SELECT [soCMND] ,[HoKH] ,[TenKH] ,[DiaChi],[SDT],[GioiTinh]   FROM [dbo].[KhachHang] where soCMND not null ";
 			if (txtsoCMNDQLKH.getText().equals("") == false) {
-				query+="and soCMND like N\\'%+"+txtsoCMNDQLKH.getText().trim()+"%\\' ";
+				query += "and soCMND like N\\'%+" + txtsoCMNDQLKH.getText().trim() + "%\\' ";
 			}
 			if (txttenQLKH.getText().equals("") == false) {
-				query+="and tenKH like N\\'%+"+txttenQLKH.getText().trim()+"%\\' ";
+				query += "and tenKH like N\\'%+" + txttenQLKH.getText().trim() + "%\\' ";
 			}
 			if (txthoQLKH.getText().equals("") == false) {
-				query+="and hoKH like N\\'%+"+txthoQLKH.getText().trim()+"%\\' ";
+				query += "and hoKH like N\\'%+" + txthoQLKH.getText().trim() + "%\\' ";
 			}
 			if (txtgioiTinhQLKH.getText().equals("") == false) {
-				query+="and gioiTinh like N\\'%+"+txtgioiTinhQLKH.getText().trim()+"%\\' ";
+				query += "and gioiTinh like N\\'%+" + txtgioiTinhQLKH.getText().trim() + "%\\' ";
 			}
 			if (txtDiaChiQLKH.getText().equals("") == false) {
-				query+="and DiaChi like N\\'%+"+txtDiaChiQLKH.getText().trim()+"%\\' ";
+				query += "and DiaChi like N\\'%+" + txtDiaChiQLKH.getText().trim() + "%\\' ";
 			}
 			if (txtSoDTQLKH.getText().equals("") == false) {
-				query+="and SDT like N\\'%+"+txtSoDTQLKH.getText().trim()+"%\\' ";
+				query += "and SDT like N\\'%+" + txtSoDTQLKH.getText().trim() + "%\\' ";
 			}
 			Statement state = conn.createStatement();
 			ResultSet rs = state.executeQuery(query);
 			while (rs.next()) {
-				
-				list.add(new KhachHang(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6)));
+
+				list.add(new KhachHang(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5), rs.getString(6)));
 				tableQLKH.refresh();
 
-				
+			}
 
-			}		
-			
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -133,8 +162,6 @@ public class KhachHangDAO {
 			tableQLKH.setItems(FXCollections.observableArrayList(list.subList(start, count)));
 		tableQLKH.refresh();
 		return count;
-		
-			
 
 	}
 

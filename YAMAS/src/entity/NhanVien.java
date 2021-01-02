@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class NhanVien {
 	private String maNV;
+	private String soCMND;
 	private String hoNV;
 	private String tenNV;
 	private String matKhau;
@@ -73,10 +74,19 @@ public class NhanVien {
 	public void setNgayLam(Date ngayLam) {
 		this.ngayLam = ngayLam;
 	}
-	public NhanVien(String maNV, String hoNV, String tenNV, String matKhau, float luong, String diaChi, String gioiTinh,
-			String chucVu, String caLam, Date ngayLam) {
+	
+	public String getSoCMND() {
+		return soCMND;
+	}
+	public void setSoCMND(String soCMND) {
+		this.soCMND = soCMND;
+	}
+	
+	public NhanVien(String maNV, String soCMND, String hoNV, String tenNV, String matKhau, float luong, String diaChi,
+			String gioiTinh, String chucVu, String caLam, Date ngayLam) {
 		super();
 		this.maNV = maNV;
+		this.soCMND = soCMND;
 		this.hoNV = hoNV;
 		this.tenNV = tenNV;
 		this.matKhau = matKhau;
@@ -86,6 +96,14 @@ public class NhanVien {
 		this.chucVu = chucVu;
 		this.caLam = caLam;
 		this.ngayLam = ngayLam;
+	}
+	
+	public NhanVien(String maNV, String hoNV, String tenNV) {
+		super();
+		this.maNV = maNV;
+		
+		this.hoNV = hoNV;
+		this.tenNV = tenNV;
 	}
 	public NhanVien() {
 		super();

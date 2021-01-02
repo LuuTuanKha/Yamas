@@ -25,6 +25,7 @@ public class Connect_Data {
 			}
 		catch (SQLException e) {
 			e.printStackTrace();
+			
 			// TODO: handle exception
 		}
 		
