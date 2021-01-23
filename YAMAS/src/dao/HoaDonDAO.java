@@ -1,47 +1,36 @@
 package dao;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.Scanner;
-
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 
 import connectDATA.Connect_Data;
 import entity.CTHD;
 import entity.HoaDon;
-import entity.KhachHang;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
-import xuLyChuoi.XuLyChuoi;
+
 
 public class HoaDonDAO {
-	public void getDSHoaDon(JFXTextField txtSoCMNDKHQLHD, JFXTextField txtHoKHQLHD, JFXTextField txtTenKHQLHD,
+	public int getDSHoaDon(JFXTextField txtSoCMNDKHQLHD, JFXTextField txtHoKHQLHD, JFXTextField txtTenKHQLHD,
 			JFXTextField txtSoDTKHQLHD, JFXTextField txtMANVQLHD, JFXTextField txtMAHDQLHD, JFXDatePicker dpkFromQLHD,
-			JFXDatePicker dpktoQLHD, TableView<HoaDon> tableQLHD_HD, ObservableList<HoaDon> list) {
+			JFXDatePicker dpktoQLHD, TableView<HoaDon> tableQLHD_HD, ObservableList<HoaDon> list, int start, int end) {
 
 		Connect_Data.getInstance();
 		Connection conn = Connect_Data.getConnection();
-
+		list.clear();
 		try {
 			String query = "SELECT [MaHoaDon], [dbo].[HoaDon].[soCMND], [dbo].[HoaDon].[maNhanVien], [NgayLapHD], [TongTien] FROM [dbo].[HoaDon] LEFT  JOIN [dbo].[KhachHang] as kh ON [dbo].[HoaDon].[soCMND] = kh.[soCMND] LEFT  JOIN [dbo].[NhanVien] as nv ON [dbo].[HoaDon].[maNhanVien] = nv.maNhanVien Where [dbo].[HoaDon].MaHoaDon is not NULL  ";
 			if (txtSoCMNDKHQLHD.getText().equals("") == false && txtSoCMNDKHQLHD.getText() != null)
 
 				query += "and kh.soCMND  like \'%" + txtSoCMNDKHQLHD.getText().trim() + "%\' ";
 			if (txtHoKHQLHD.getText().equals("") == false && txtHoKHQLHD.getText() != null) {
-				String s = XuLyChuoi.removeAccent(txtHoKHQLHD.getText().trim());
+				
 
 				query += "and kh.HoKH like N\'%" + txtHoKHQLHD.getText().trim() + "%\'  ";
 				// + "or kh.HoKH like \'%" + s + "%\' ";
@@ -83,6 +72,13 @@ public class HoaDonDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		int count = list.size();
+		if (count >= end)
+			tableQLHD_HD.setItems(FXCollections.observableArrayList(list.subList(start, end)));
+		else
+			tableQLHD_HD.setItems(FXCollections.observableArrayList(list.subList(start, count)));
+		tableQLHD_HD.refresh();
+		return count;
 
 	}
 
@@ -118,6 +114,113 @@ public class HoaDonDAO {
 			e.printStackTrace();
 		}
 
+	}
+	public void getDSHoaDon_ThongKeDoanhThu_Thang(XYChart.Series<String, Double> listDT,
+			XYChart.Series<String, Double> listLN, JFXDatePicker from, JFXDatePicker to) {
+		
+		Connect_Data.getInstance();
+		Connection conn = Connect_Data.getConnection();
+		
+		try {
+			
+			String query = "SELECT  sum(TongTien),MONTH([dbo].[HoaDon].[NgayLapHD]), YEAR([dbo].[HoaDon].[NgayLapHD]) as b2  FROM [dbo].[HoaDon]";
+			
+			if (from.getValue() != null && to.getValue() != null) {
+				
+				System.out.println("Đã");
+				query += "where [dbo].[HoaDon].[NgayLapHD] >= \'" + from.getValue().toString() + "\' ";
+				query += "and [dbo].[HoaDon].[NgayLapHD] <= \'" + to.getValue().toString() + "\' ";
+			}
+			query += " group by  MONTH([dbo].[HoaDon].[NgayLapHD]), YEAR([dbo].[HoaDon].[NgayLapHD])";
+			
+			System.out.println(query);
+			Statement state = conn.createStatement();
+			ResultSet rs = state.executeQuery(query);
+			
+			while (rs.next()) {
+				
+				listDT.getData().add(new XYChart.Data<String, Double>(rs.getString(2).toString()+ "-" + rs.getString(3), rs.getDouble(1)));
+				listLN.getData().add(new XYChart.Data<String, Double>(rs.getString(2).toString()+ "-" + rs.getString(3), rs.getDouble(1) / 10));
+				//listLN.getData().add(new XYChart.Data<String, Double>(rs.getDate(1).toString(), rs.getDouble(1) / 10));
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public void getDSHoaDon_ThongKeDoanhThu_Nam(XYChart.Series<String, Double> listDT,
+			XYChart.Series<String, Double> listLN, JFXDatePicker from, JFXDatePicker to) {
+		
+		Connect_Data.getInstance();
+		Connection conn = Connect_Data.getConnection();
+		
+		try {
+			
+			String query = "SELECT  sum(TongTien),YEAR([dbo].[HoaDon].[NgayLapHD]) as b2  FROM [dbo].[HoaDon]";
+			
+			if (from.getValue() != null && to.getValue() != null) {
+				
+				System.out.println("Đã");
+				query += "where [dbo].[HoaDon].[NgayLapHD] >= \'" + from.getValue().toString() + "\' ";
+				query += "and [dbo].[HoaDon].[NgayLapHD] <= \'" + to.getValue().toString() + "\' ";
+			}
+			query += " group by  YEAR([dbo].[HoaDon].[NgayLapHD])";
+			
+			System.out.println(query);
+			Statement state = conn.createStatement();
+			ResultSet rs = state.executeQuery(query);
+			
+			while (rs.next()) {
+				
+				listDT.getData().add(new XYChart.Data<String, Double>(rs.getString(2).toString(), rs.getDouble(1)));
+				listLN.getData().add(new XYChart.Data<String, Double>(rs.getString(2).toString(), rs.getDouble(1) / 10));
+				//listLN.getData().add(new XYChart.Data<String, Double>(rs.getDate(1).toString(), rs.getDouble(1) / 10));
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public void getDSHoaDon_ThongKeDoanhThu_Quy(XYChart.Series<String, Double> listDT,
+			XYChart.Series<String, Double> listLN, JFXDatePicker from, JFXDatePicker to) {
+		
+		Connect_Data.getInstance();
+		Connection conn = Connect_Data.getConnection();
+		
+		try {
+			
+			String query = "SELECT DATEPART(YEAR,[dbo].[HoaDon].[NgayLapHD]) [Year],\r\n"
+					+ " DATEPART(QUARTER,[dbo].[HoaDon].[NgayLapHD]) [Quarter], sum(TongTien) FROM [dbo].[HoaDon]";
+			
+			if (from.getValue() != null && to.getValue() != null) {
+				
+				System.out.println("Đã");
+				query += "where [dbo].[HoaDon].[NgayLapHD] >= \'" + from.getValue().toString() + "\' ";
+				query += "and [dbo].[HoaDon].[NgayLapHD] <= \'" + to.getValue().toString() + "\' ";
+			}
+			query += " GROUP BY DATEPART(YEAR,[dbo].[HoaDon].[NgayLapHD]),DATEPART(QUARTER,[dbo].[HoaDon].[NgayLapHD])\r\n"
+					+ "ORDER BY 1,2";
+			
+			System.out.println(query);
+			Statement state = conn.createStatement();
+			ResultSet rs = state.executeQuery(query);
+			
+			while (rs.next()) {
+				
+				listDT.getData().add(new XYChart.Data<String, Double>("Quý "+rs.getString(2).toString()+ "-" + rs.getString(1), rs.getDouble(3)));
+				listLN.getData().add(new XYChart.Data<String, Double>("Quý " +rs.getString(2).toString()+ "-" + rs.getString(1), rs.getDouble(3) / 10));
+				//listLN.getData().add(new XYChart.Data<String, Double>(rs.getDate(1).toString(), rs.getDouble(1) / 10));
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void themHoaDon(HoaDon hd, ObservableList<CTHD> dsGioHang) {

@@ -10,8 +10,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -53,6 +55,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
@@ -67,6 +70,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
@@ -97,6 +101,8 @@ import javafx.util.converter.IntegerStringConverter;
 public class MHLVChinhController implements Initializable {
 	static String DataPath = "T:\\ptud\\";
 	static String LocalPath = "D:\\BTL\\";
+	int explHD = 0;
+	int explTK = 0;
 
 	public String getLocalPath() {
 		return LocalPath;
@@ -106,7 +112,21 @@ public class MHLVChinhController implements Initializable {
 	int end = 15;
 	int pageCount = 1;
 	int soLuongTrang = 1;
-
+	// ====
+	int startQLHD = 0;
+	int endQLHD = 15;
+	int pageCountQLHD = 1;
+	int soLuongTrangQLHD = 1;
+	// =========
+	int startQLKH = 0;
+	int endQLKH = 15;
+	int pageCountQLKH = 1;
+	int soLuongTrangQLKH = 1;
+	// ===========
+	int startQLNV = 0;
+	int endQLNV = 15;
+	int pageCountQLNV = 1;
+	int soLuongTrangQLNV = 1;
 	@FXML
 	Label lblTenNVLogin;
 	DecimalFormat formatter = new DecimalFormat("###,###,### VNĐ");
@@ -129,6 +149,11 @@ public class MHLVChinhController implements Initializable {
 	JFXPasswordField txtMatKhau;
 	@FXML
 	Label lblLGStatus;
+	@FXML
+	JFXTextField txtunHidePassLogin;
+	@FXML
+	JFXButton btnHideunPassLogin;
+	String matKhauDangNhap = "đang ẩn";
 	// ====dialog=====
 	@FXML
 	AnchorPane dialog;
@@ -148,6 +173,8 @@ public class MHLVChinhController implements Initializable {
 	AnchorPane dialogValue;
 	@FXML
 	Label lblDialogVLContent;
+	@FXML
+	Label lblDialogVLTrangThai;
 	@FXML
 	Label lblDialogTitleVL;
 	@FXML
@@ -189,10 +216,10 @@ public class MHLVChinhController implements Initializable {
 
 	// ==========
 	// =====Biến local=====
-	//private String password = "";
-	private String passwordC = "";
-	private String passwordM = "";
-	private String passwordXN = "";
+	// private String password = "";
+	private String passwordC = "đang ẩn";
+	private String passwordM = "đang ẩn";
+	private String passwordXN = "đang ẩn";
 
 	public void setStage(Stage stage) {
 		thisStage = stage;
@@ -203,7 +230,10 @@ public class MHLVChinhController implements Initializable {
 		thisStage.show();
 	}
 
-	private int count = 1; // biến đếm tầng giao diện
+	private int count = 1;
+	private int countQLHD = 1;// biến đếm tầng giao diện
+	private int countQLKH = 1;// biến đếm tầng giao diện
+	private int countQLNV = 1;// biến đếm tầng giao diện
 //	private ObservableList<String> list = FXCollections.observableArrayList("    Tạo giỏ hàng mới",
 //			"    Tạo hoá đơn mới", "    Quản lý khách hàng", "    Quản lý sản phẩm", "    Quản lý hoá đơn");
 //	private ObservableList<String> listLoaiXe = FXCollections.observableArrayList("Tất cả","Xe số","Xe tay ga","Xe thể thao");
@@ -212,7 +242,7 @@ public class MHLVChinhController implements Initializable {
 //	private ObservableList<String> listGiaThanh = FXCollections.observableArrayList("Tất cả","Đen","Trắng","Xám","Đỏ","Vàng","Xanh lá cây","Xanh Dương","Xanh Aqua");
 	private Image image = new Image("img/myprofile.png");
 	private Image image2 = new Image("img/analysis.png");
-	private Image image3 = new Image("img/customer.png");
+	private Image image3 = new Image("img/hoadonmoi.png");
 	private Image image4 = new Image("img/bill.png");
 	private Image imageUnMask = new Image("img/unmask.png");
 	private Image imageMask = new Image("img/mask.png");
@@ -229,7 +259,8 @@ public class MHLVChinhController implements Initializable {
 	TreeItem<String> HD_QLHD = new TreeItem<>("Xem hoá đơn cũ");
 	TreeItem<String> tree_QLKH = new TreeItem<>("2. Khách hàng");
 	TreeItem<String> tree_QLSP = new TreeItem<>("3. Sản phẩm");
-	TreeItem<String> tree_TK = new TreeItem<>("4. Thống kê");
+	TreeItem<String> tree_QLNV = new TreeItem<>("4. Nhân viên");
+	TreeItem<String> tree_TK = new TreeItem<>("5. Thống kê");
 	TreeItem<String> TK_DoanhThu = new TreeItem<>("TK doanh thu");
 	TreeItem<String> TK_SanPham = new TreeItem<>("TK sản phẩm");
 	TreeItem<String> TK_NhanVien = new TreeItem<>("TK nhân viên");
@@ -267,8 +298,9 @@ public class MHLVChinhController implements Initializable {
 	AnchorPane menuCaiDat;
 	@FXML
 	JFXButton btnThemFolderImg;
+
 	@FXML
-	JFXButton btnThemDatabase;
+	JFXCheckBox cbFullScreen;
 	@FXML
 	JFXButton btnThemFilePath;
 	@FXML
@@ -277,6 +309,8 @@ public class MHLVChinhController implements Initializable {
 	TextField txtThemDatabase;
 	@FXML
 	TextField txtThemFilePath;
+	@FXML
+	JFXButton btnThoatCaiDat;
 	@FXML
 	Button btnLogOut;
 	@FXML
@@ -293,6 +327,7 @@ public class MHLVChinhController implements Initializable {
 	// =========thống kê====
 	@FXML
 	AnchorPane ThongKePane;
+	// ----TK doanh thu
 	@FXML
 	AnchorPane ThongKeDoanhThuPane;
 	@FXML
@@ -305,6 +340,12 @@ public class MHLVChinhController implements Initializable {
 	JFXDatePicker dpToTKDT;
 	@FXML
 	JFXComboBox<String> cbbTKDoanhThu;
+	@FXML
+	JFXButton btnMacDinh;
+	@FXML
+	Label lblTKDoanhThu;
+	@FXML
+	JFXTextField txtTopTKKH;
 	private ObservableList<String> listThongKeDoanhThu = FXCollections.observableArrayList("Ngày", "Tháng", "Quý",
 			"Năm");
 	@FXML
@@ -315,6 +356,58 @@ public class MHLVChinhController implements Initializable {
 	TableColumn<HoaDon, Double> TongDoanhThuTKDTCol = new TableColumn<HoaDon, Double>();
 	@FXML
 	TableColumn<HoaDon, Double> TongLaiTKDTCol = new TableColumn<HoaDon, Double>();
+	// ===TK mặt hàng
+
+	// ----TK doanh thu
+	@FXML
+	AnchorPane ThongKeMatHangPane;
+	@FXML
+	BarChart<String, Integer> barCharMatHang;
+
+	@FXML
+	JFXDatePicker dpkFromTKMH;
+	@FXML
+	JFXDatePicker dpToTKMH;
+	@FXML
+	JFXComboBox<String> cbbTKMatHang;
+	@FXML
+	JFXButton btnMacDinhMH;
+	@FXML
+	Label lblTKMatHang;
+	private ObservableList<String> listThongKeMatHang = FXCollections.observableArrayList("5", "10", "20", "30",
+			"Tất cả");
+	@FXML
+	TableView<HoaDon> tableTKMH;
+	// ======TK Khách hàng =====
+	@FXML
+	AnchorPane ThongKeKHPane;
+
+	@FXML
+	JFXDatePicker dpkFromTKKH;
+	@FXML
+	JFXDatePicker dpToTKKH;
+	@FXML
+	JFXComboBox<String> cbbGioiTinhKH;
+	@FXML
+	JFXButton btnMacDinhKH;
+//	@FXML
+//	Label lblTKMatHang;
+	private ObservableList<String> listThongKeGTKH = FXCollections.observableArrayList("Tất cả", "Nam", "Nữ");
+	private ObservableList<KhachHang> listThongKeKH = FXCollections.observableArrayList();
+	@FXML
+	TableView<KhachHang> tableTKKH;
+	@FXML
+	TableColumn<KhachHang, String> tenTKKHCol = new TableColumn<KhachHang, String>();
+	@FXML
+	TableColumn<KhachHang, String> hoTKKHCol = new TableColumn<KhachHang, String>();
+	@FXML
+	TableColumn<KhachHang, String> soCMNFTKKHCol = new TableColumn<KhachHang, String>();
+	@FXML
+	TableColumn<KhachHang, String> SoLanMuaTKKHCol = new TableColumn<KhachHang, String>();
+	@FXML
+	TableColumn<KhachHang, String> tongTienMuaTKKHCol = new TableColumn<KhachHang, String>();
+	@FXML
+	TableColumn<KhachHang, String> topTKKHCol = new TableColumn<KhachHang, String>();
 	// ===================QUẢN LÝ HOÁ ĐƠN CŨ====================
 	@FXML
 	AnchorPane paneQLHD;
@@ -341,7 +434,17 @@ public class MHLVChinhController implements Initializable {
 	TableColumn<HoaDon, Date> ngayLapHD_QLHD_HDCol = new TableColumn<HoaDon, Date>();
 	@FXML
 	TableColumn<HoaDon, Double> TongTienHD_QLHD_HDCol = new TableColumn<HoaDon, Double>();
-
+	@FXML
+	JFXButton btnFirstQLHD;
+	@FXML
+	JFXButton btnLastQLHD;
+	@FXML
+	JFXButton btnLeftQLHD;
+	@FXML
+	JFXButton btnRightQLHD;
+	@FXML
+	Label lblTrangHienTaiQLHD;
+	// ==========
 	@FXML
 	TableView<CTHD> tableQLHD_CTHD;
 	@FXML
@@ -773,6 +876,88 @@ public class MHLVChinhController implements Initializable {
 	Button btnThemQLKH;
 	@FXML
 	Button btnXoaTrangQLKH;
+	@FXML
+	Label lblTrangThaiQLKH;
+	// =============================================================================
+	// =====================VAR QUẢN LÝ NHÂN VIÊN
+	// ===================================
+	@FXML
+	AnchorPane QLNhanVienPane;
+
+	@FXML
+	TableView<NhanVien> tableQLNV = new TableView<>();
+	@FXML
+	TableColumn<NhanVien, String> maQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, String> hoQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, String> tenQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, String> gioiTinhQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, String> diaChiQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, String> matKhauQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, String> chucVuQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, Float> LuongQLNVCol = new TableColumn<NhanVien, Float>();
+	@FXML
+	TableColumn<NhanVien, String> caLamQLNVCol = new TableColumn<NhanVien, String>();
+	@FXML
+	TableColumn<NhanVien, Date> ngayVaoLamQLNVCol = new TableColumn<NhanVien, Date>();
+	@FXML
+	TableColumn<NhanVien, String> CMNDQLNVCol = new TableColumn<NhanVien, String>();
+
+	ObservableList<String> listGTQLNV = FXCollections.observableArrayList("Tất cả/ Khác", "Nam", "Nữ");
+	ObservableList<String> listChucVuQLNV = FXCollections.observableArrayList("Tất cả/Khác", "Nhân viên", "Quản lý");
+
+	ObservableList<NhanVien> dsQLNhanVien = FXCollections.observableArrayList();
+	@FXML
+	JFXTextField txtsoCMNDQLNV;
+	@FXML
+	JFXTextField txttenQLNV;
+	@FXML
+	JFXTextField txthoQLNV;
+	@FXML
+	JFXComboBox<String> txtgioiTinhQLNV;
+	@FXML
+	JFXComboBox<String> txtChucVuQLNV;
+	@FXML
+	JFXTextField txtDiaChiQLNV;
+	@FXML
+	JFXTextField txtLuongQLNV;
+	@FXML
+	JFXTextField txtmaQLNV;
+	@FXML
+	JFXTextField txtmatKhauQLNV;
+	@FXML
+	JFXTextField txtcalamQLNV;
+	@FXML
+	JFXDatePicker txtngayVaoLamQLNV;
+
+	@FXML
+	JFXButton btnLeftQLNV;
+	@FXML
+	JFXButton btnRightQLNV;
+	@FXML
+	JFXButton btnFirstQLNV;
+	@FXML
+	JFXButton btnLastQLNV;
+	@FXML
+	Label lblPageQLNV;
+	@FXML
+	Button btnLuuQLNV;
+	@FXML
+	Button btnHoanTacQLNV;
+	@FXML
+	Button btnThemQLNV;
+	@FXML
+	Button btnXoaQLNV;
+	@FXML
+	Button btnXoaTrangQLNV;
+	@FXML
+	Label lblTrangThaiQLNV;
 	// =============================================================================
 
 	// ====================BẮT SỰ KIỆN==============================
@@ -814,45 +999,35 @@ public class MHLVChinhController implements Initializable {
 	public void ChuyenChucNang2() {
 
 		// TreeItem<String> selectedItem = tree.getSelectionModel().getSelectedItem();
+		String s = tree.getSelectionModel().getSelectedItem().getValue();
+		if (s.equals("1. Hoá đơn") && explHD == 0) {
+			tree_QLHD.setExpanded(true);
+			explHD = 1;
 
+		} else if (s.equals("1. Hoá đơn") && explHD == 1) {
+			tree_QLHD.setExpanded(false);
+			explHD = 0;
+		}
+		if (s.equals("5. Thống kê") && explTK == 0) {
+			tree_TK.setExpanded(true);
+			explTK = 1;
+
+		} else if (s.equals("5. Thống kê") && explTK == 1) {
+			tree_TK.setExpanded(false);
+			explTK = 0;
+		}
 		int selectedTree = 0;
 		selectedTree = tree.getSelectionModel().getSelectedIndex();
 		boolean check = tree_QLHD.isExpanded();
 		System.out.println(selectedTree);
-		// System.out.println(selectedTree);
-		// System.out.println(selectedItem.toString());
-//		if (selectedTree == 0) {
-//			if (selectedItem.toString().equals("TreeItem [ value: Lập hoá đơn ]")) {
-//				// int index = selectedItem.getParent().getChildren().indexOf(selectedItem);
-//				int x = tree.getRow(selectedItem);
-//				// System.out.println(index);
-//				XuLyLapHoaDon();
-//				count = 0;
-//				themHoaDon.toFront();
-//
-//				// System.out.println(x);
-//
-//			} else if (selectedItem.toString().equals("TreeItem [ value: Tạo giỏ hàng ]")) {
-//
-//				count = 0;
-//				timKiem_them_matHang.toFront();
-//				chiTietSP.setVisible(false);
-//
-//			}
-//
-//		}
+
 		if (check == true) {
-			if (selectedTree == 1) {
-				// int index = selectedItem.getParent().getChildren().indexOf(selectedItem);
-				// int x = tree.getRow(selectedItem);
-				// System.out.println(index);
+			if (selectedTree == 1) { // Lập hoá đơn
+
 				XuLyLapHoaDon();
 				count = 0;
 				themHoaDon.toFront();
-				// System.out.println(x);
-
-			} else if (selectedTree == 2) {
-
+			} else if (selectedTree == 2) { // Tạo giỏ hàng
 				count = 0;
 				timKiem_them_matHang.toFront();
 				chiTietSP.setVisible(false);
@@ -866,21 +1041,35 @@ public class MHLVChinhController implements Initializable {
 			else if (selectedTree == 4) { // quản lý khách hàng
 				count = 0;
 				QLKhachHangPane.toFront();
+				XuLyQLKH();
 			} else if (selectedTree == 5) { // quản lý sản phẩm / mặt hàng
 				XuLyBangQuanLySanPham();
 				count = 0;
 				XuLyBangSQLSP();
-			} else if (tree_TK.isExpanded() == true) {
-				if (selectedTree == 7) { // thống kê doanh thu
+			} else if (selectedTree == 6) { // quản lý nhân viên
+				QLNhanVienPane.toFront();// quản lý nhân viên
+				XuLyQLNV();
+				count = 0;
+			}
+
+			else if (tree_TK.isExpanded() == true) {
+				if (selectedTree == 8) { // thống kê doanh thu
 					count = 0;
 					XuLyThongKeDoanhThu_Backgr();
 					ThongKePane.toFront();
 					ThongKeDoanhThuPane.toFront();
 
-				} else if (selectedTree == 5) { // quản lý sản phẩm / mặt hàng
-					XuLyBangQuanLySanPham();
+				} else if (selectedTree == 9) { // thống kê khách hàng
+					ThongKeKHPane.toFront();
+					ThongKePane.toFront();
+					XuLyThongKeKhachHang_BackGr();
 					count = 0;
-					XuLyBangSQLSP();
+
+				} else if (selectedTree == 10) { // thống kê sản phẩm / mặt hàng
+					ThongKeMatHangPane.toFront();
+					ThongKePane.toFront();
+					XuLyThongKeMatHang_BackGr();
+					count = 0;
 				}
 
 			}
@@ -895,20 +1084,34 @@ public class MHLVChinhController implements Initializable {
 			if (selectedTree == 1) { // quản lý khách hàng
 				count = 0;
 				QLKhachHangPane.toFront();
+				XuLyQLKH();
 			} else if (selectedTree == 2) { // quản lý sản phẩm / mặt hàng
 				XuLyBangQuanLySanPham();
 				count = 0;
 				// XuLyBangSQLSP();
+			} else if (selectedTree == 3) {
+				QLNhanVienPane.toFront();// quản lý nhân viên
+				XuLyQLNV();
+				count = 0;
+				// XuLyBangSQLSP();
 			} else if (tree_TK.isExpanded() == true) {
-				if (selectedTree == 4) { // thống kê doanh thu
+				if (selectedTree == 5) { // thống kê doanh thu
 					count = 0;
 					XuLyThongKeDoanhThu_Backgr();
 					ThongKePane.toFront();
 					ThongKeDoanhThuPane.toFront();
 
-				} else if (selectedTree == 5) { // quản lý sản phẩm / mặt hàng
-					XuLyBangQuanLySanPham();
+				} else if (selectedTree == 6) { // thống kê khách hàng
+					ThongKeKHPane.toFront();
+					ThongKePane.toFront();
+					XuLyThongKeKhachHang_BackGr();
 					count = 0;
+
+				} else if (selectedTree == 7) { // thống kê sản phẩm / mặt hàng
+					count = 0;
+					XuLyThongKeMatHang_BackGr();
+					ThongKePane.toFront();
+					ThongKeMatHangPane.toFront();
 					// XuLyBangSQLSP();
 				}
 
@@ -918,6 +1121,1363 @@ public class MHLVChinhController implements Initializable {
 
 	}
 
+	private void XuLyQLNV() {
+		XuLyTableQLNV();
+		NhanVienDAO nvDao = new NhanVienDAO();
+		txtmaQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+				
+			}
+
+		});
+		txthoQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+				;
+			}
+
+		});
+		txttenQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+				;
+			}
+
+		});
+		txtsoCMNDQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+				;
+			}
+
+		});
+		txtmatKhauQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+				;
+			}
+
+		});
+		txtLuongQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+				;
+			}
+
+		});
+		txtcalamQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+				;
+			}
+
+		});
+		txtDiaChiQLNV.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLyTimKiemQLNV();
+
+			}
+
+		});
+		btnXoaTrangQLNV.setOnAction(e -> {
+			txtDiaChiQLNV.setText("");
+			txtcalamQLNV.setText("");
+			txtLuongQLNV.setText("");
+			txtmatKhauQLNV.setText("");
+			txtsoCMNDQLNV.setText("");
+			txttenQLNV.setText("");
+			txthoQLNV.setText("");
+			txtmaQLNV.setText("");
+			txtngayVaoLamQLNV.setValue(null);
+			txtgioiTinhQLNV.getSelectionModel().selectFirst();
+			txtChucVuQLNV.getSelectionModel().selectFirst();
+			XuLyTimKiemQLNV();
+		});
+		btnLuuQLNV.setOnAction(e -> {
+			dsQLNhanVien.size();
+			for (int i = 0; i < dsQLNhanVien.size(); i++) {
+				NhanVien nv = dsQLNhanVien.get(i);
+				nvDao.CapNhat_NhanVien_QLNV(nv);
+				lblTrangThaiQLNV.setText("Đang lưu những thay đổi...");
+
+			}
+
+			lblTrangThaiQLNV.setText("Đã Lưu những thay đổi!");
+		});
+		btnThemQLNV.setOnAction(e -> {
+			XuLyBtnThemNVQLNV();
+		});
+		btnXoaQLNV.setOnAction(e -> {
+			NhanVien nv = tableQLNV.getSelectionModel().getSelectedItem();
+			if (nv == null) {
+				lblTrangThaiQLNV.setText("Chưa chọn đối tượng để xoá!");
+			} else {
+				if (nvDao.XoaNhanVien_TheoMa(nv.getMaNV())) {
+					lblTrangThaiQLNV.setText("Xoá thành công!");
+					tableQLKhachHang.refresh();
+				} else {
+					dialog.setVisible(true);
+					dialogThongBao.setVisible(true);
+					dialog.toFront();
+					dialogThongBao.toFront();
+					lblDialogTitle.setText("Không thể xoá!");
+					lblDialogContent.setText("Nhân viên đã lập hoá đơn. Không thể xoá.");
+					btnYes.setVisible(false);
+					btnNo.setText("Thoát");
+					btnNo.setOnAction(e2 -> {
+						btnYes.setVisible(true);
+						dialog.setVisible(false);
+						dialogThongBao.setVisible(false);
+						dialog.toBack();
+						dialogThongBao.toBack();
+						btnNo.setText("Không");
+
+					});
+
+				}
+
+			}
+		});
+
+	}
+
+	private void XuLyBtnThemNVQLNV() {
+
+		if (XuLyRegexThemNVQLNV() == true) {
+			java.sql.Date sqlDate = java.sql.Date.valueOf( txtngayVaoLamQLNV.getValue().toString() );
+			NhanVienDAO nvDao = new NhanVienDAO();
+			NhanVien nv = new NhanVien(txtmaQLNV.getText().trim(), txtsoCMNDQLNV.getText().trim(), txthoQLNV.getText().trim(),
+					txttenQLNV.getText().trim(), txtmatKhauQLNV.getText().trim(), Float.parseFloat(txtLuongQLNV.getText().trim()), txtDiaChiQLNV.getText().trim(), txtgioiTinhQLNV.getSelectionModel().getSelectedItem(), txtChucVuQLNV.getSelectionModel().getSelectedItem(), txtcalamQLNV.getText().trim(), sqlDate);
+			if(nvDao.themNhanVien(nv)==true) {
+				lblTrangThaiQLNV.setText("THÊM NHÂN VIÊN THÀNH CÔNG");
+				dsQLNhanVien.add(nv);
+				tableQLKhachHang.refresh();
+			}
+		
+			else {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+				lblDialogTitle.setText("Trùng mã nhân viên!");
+				lblDialogContent.setText("Vui lòng thay đổi mã nhân viên");
+				
+				XuLyBtnNoRegex(txtmaQLNV);
+			
+			}
+
+		}
+
+	}
+
+	private boolean XuLyRegexThemNVQLNV() {
+		String hoNV = txthoQLNV.getText().trim();
+		String tenNV = txttenQLNV.getText().trim();
+		String CMND = txtsoCMNDQLNV.getText().trim();
+		String maNV = txtmaQLNV.getText().trim();
+		if (!(maNV.length()>0 && maNV.matches("(NV)\\d{3}"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Mã nhân viên không đúng!");
+			lblDialogContent.setText("Mã nhân viên phải có dạng NVXXX. Vỡi X là số.");
+
+			XuLyBtnNoRegex(txtmaQLNV);
+			return false;
+			
+		}
+		if( txtChucVuQLNV.getSelectionModel().getSelectedIndex()==0) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Chức vụ sai!");
+			lblDialogContent.setText("Chức vụ phải là Nhân viên hoặc Quản lý");
+			txtChucVuQLNV.getSelectionModel().select(2);
+			XuLyBtnNoRegex(txtChucVuNVTT);
+			return false;
+		}
+		String x = txtmatKhauQLNV.getText().trim();
+		if (!(x.length() > 0 && x.matches("[A-Za-z0-9]{6}[A-Za-z0-9]{0,10}"))) {
+			if (x.length() == 0) {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+				lblDialogTitle.setText("Mật khẩu trống!");
+				lblDialogContent.setText("Mật khẩu không được để trống.");
+
+				XuLyBtnNoRegex(txtmatKhauQLNV);
+				return false;
+
+			} else
+				
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Mật khẩu không đúng!");
+			lblDialogContent.setText("Mật khẩu phải có độ dài 6-16 ký tự, có ít nhất 1 chữ cái (a-z hoặc A-Z) và 1 chữ số");
+
+			XuLyBtnNoRegex(txtmatKhauQLNV);
+			return false;
+			
+			
+		}
+		String luong = txtLuongQLNV.getText().trim();
+		if (!(luong.length() > 0 && luong.matches("[1-9]{1}[0-9]+"))) {
+			
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Lương không đúng!");
+			lblDialogContent.setText("Lương phải là số > 0 và không được để trống ");
+
+			XuLyBtnNoRegex(txtmatKhauQLNV);
+			return false;
+		}
+		if (!(hoNV.length() > 0 && hoNV.matches(
+				"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z ]*"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Họ nhân viên không đúng!");
+			lblDialogContent.setText("Họ nhân viên không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txthoQLNV);
+			return false;
+		}
+		if (!(tenNV.length() > 0 && tenNV.matches("^[\\p{L} .'-]+$"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Tên nhân viên không đúng!");
+			lblDialogContent.setText("tên nhân viên không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txttenQLNV);
+			return false;
+		}
+		if (CMND.length() > 0) {
+			if (!CMND.matches("\\d{9}|\\d{12}")) {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+				lblDialogTitle.setText("Số CMND/ Căn cước không đúng!");
+				lblDialogContent.setText(
+						"Sô cmnd/ Thẻ căn cước phải là số và không được để trống. Lưu ý: Số CMND có 9 số, thẻ căn cướccos 12 số. ");
+
+				XuLyBtnNoRegex(txtsoCMNDQLNV);
+				return false;
+			}
+		} else {
+
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Số CMND/ Căn cước trống!");
+			lblDialogContent.setText("Sô cmnd/ Thẻ căn cước phải là số và không được để trống!");
+
+			XuLyBtnNoRegex(txtsoCMNDQLNV);
+
+			return false;
+		}
+		String calam = txtcalamQLNV.getText();
+		if (!(calam.length() > 0 && calam.matches("[\\p{L}\\s\\d -]+"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Ca làm lỗi!");
+			lblDialogContent.setText("Ca làm không được chứa ký tự đặc biệt");
+
+			XuLyBtnNoRegex(txtCaLamNVTT);
+
+			return false;
+		}
+		String diaChi = txtDiaChiQLNV.getText();
+//		if (!(diachi.length() > 0 && diachi.matches("[\\p{L}\\s0-9()\\/_.,+- ]+"))) {
+//			//địa chỉ có kiểu X/Y/Z tên đường, tên phường, tên quận, tên thành phố : 65/3 Phạm Văn Bach, Phường 12, Quận Tân Bình, tp Hồ Chính Minh 
+//			dialog.setVisible(true);
+//			dialog.toFront();
+//			dialogThongBao.setVisible(true);
+//			lblDialogTitle.setText("Địa chỉ không đúng!");
+//			lblDialogContent.setText("Địa chỉ không được chứ ký tự đặc biệt.");
+//			XuLyBtnNoRegex(txtDiaChiQLNV);
+//			return false;
+//		}
+		if (!(diaChi.length() > 0 && diaChi.matches(
+				"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z0-9,/ ]*"))) {
+			// địa chỉ có kiểu X/Y/Z tên đường, tên phường, tên quận, tên thành phố : 65/3
+			// Phạm Văn Bach, Phường 12, Quận Tân Bình, tp Hồ Chính Minh
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Địa chỉ không đúng!");
+			lblDialogContent.setText("Địa chỉ không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txtDiaChiQLNV);
+			return false;
+		}
+		if( txtgioiTinhQLNV.getSelectionModel().getSelectedIndex()==0) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Giới tính sai!");
+			lblDialogContent.setText("Giới tính phải là Nam hoặc Nữ");
+			txtgioiTinhQLNV.getSelectionModel().select(2);
+			XuLyBtnNoRegex(txtChucVuNVTT);
+			return false;
+		}
+		//Đang08
+		return true;
+	}
+
+	private void XuLyTableQLNV() {
+		tableQLNV.setEditable(true);
+		txtgioiTinhQLNV.setItems(listGTQLNV);
+		txtgioiTinhQLNV.getSelectionModel().selectFirst();
+		txtChucVuQLNV.setItems(listChucVuQLNV);
+		txtChucVuQLNV.getSelectionModel().selectFirst();
+
+//		NhanVienDAO nvDao = new NhanVienDAO();
+//		nvDao.getNhanVien_QLNV(dsQLNhanVien, tableQLNV, txtsoCMNDQLNV, txttenQLNV, txthoQLNV, txtgioiTinhQLNV,
+//				txtChucVuQLNV, txtDiaChiQLNV, txtLuongQLNV, txtmaQLNV, txtmatKhauQLNV, txtcalamQLNV, txtngayVaoLamQLNV);
+		tableQLNV.setItems(dsQLNhanVien);
+		XuLyTimKiemQLNV();
+		maQLNVCol.setCellValueFactory(new PropertyValueFactory<>("maNV"));
+//		maQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+//		maQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+//
+//			@Override
+//			public void handle(CellEditEvent<NhanVien, String> e) {
+//
+//				TablePosition<NhanVien, String> pos = e.getTablePosition();
+//
+//				String newValue = e.getNewValue();
+//
+//				int row = pos.getRow();
+//				NhanVien nv = e.getTableView().getItems().get(row);
+//				if (!(newValue.length() > 0 && newValue.matches(
+//						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -,]*"))) {
+//					lblTrangThaiQLNV.setText("Tên không hợp lệ! ");
+//					tableQLNV.refresh();
+//				} else {
+//					nv.setTenNV(newValue);
+//					lblTrangThaiQLNV.setText("Đã cập nhật tên nhân viên. Bấm lưu để hoàn tất. ");
+//
+//				}
+//
+//			}
+//		});
+		tenQLNVCol.setCellValueFactory(new PropertyValueFactory<>("tenNV"));
+		tenQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+		tenQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<NhanVien, String> e) {
+
+				TablePosition<NhanVien, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				NhanVien nv = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"^[\\p{L} .'-]+$"))) {
+					lblTrangThaiQLNV.setText("Tên không hợp lệ! ");
+					tableQLNV.refresh();
+				} else {
+					nv.setTenNV(newValue);
+					lblTrangThaiQLNV.setText("Đã cập nhật tên nhân viên. Bấm lưu để hoàn tất. ");
+
+				}
+
+			}
+		});
+		hoQLNVCol.setCellValueFactory(new PropertyValueFactory<>("hoNV"));
+		hoQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+		hoQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<NhanVien, String> e) {
+
+				TablePosition<NhanVien, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				NhanVien nv = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -,]*"))) {
+					lblTrangThaiQLNV.setText("họ không hợp lệ! ");
+					tableQLNV.refresh();
+				} else {
+					nv.setHoNV(newValue);
+					lblTrangThaiQLNV.setText("Đã cập nhật họ nhân viên. Bấm lưu để hoàn tất. ");
+
+				}
+
+			}
+		});
+		CMNDQLNVCol.setCellValueFactory(new PropertyValueFactory<>("soCMND"));
+		CMNDQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+		CMNDQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<NhanVien, String> e) {
+
+				TablePosition<NhanVien, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				NhanVien nv = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"\\d{9}|\\d{12}"))) {
+					lblTrangThaiQLNV.setText("CMND/Căn cước không hợp lệ! ");
+					tableQLNV.refresh();
+				} else {
+					nv.setSoCMND(newValue);
+					lblTrangThaiQLNV.setText("Đã cập nhật họ CMND/ Căn cước. Bấm lưu để hoàn tất. ");
+
+				}
+
+			}
+		});
+		matKhauQLNVCol.setCellValueFactory(new PropertyValueFactory<>("matKhau"));
+		matKhauQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+		matKhauQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<NhanVien, String> e) {
+
+				TablePosition<NhanVien, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				NhanVien nv = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches("[A-Za-z0-9]{3}"))) {
+					lblTrangThaiQLNV.setText("Mật khẩu không hợp lệ! ");
+					tableQLNV.refresh();
+				} else {
+					nv.setMatKhau(newValue);
+					lblTrangThaiQLNV.setText("Đã cập nhậtmật khẩu. Bấm lưu để hoàn tất. ");
+
+				}
+
+			}
+		});
+		LuongQLNVCol.setCellValueFactory(new PropertyValueFactory<>("luong"));
+//		LuongQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+//		LuongQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+//			
+//			@Override
+//			public void handle(CellEditEvent<NhanVien, String> e) {
+//				
+//				TablePosition<NhanVien, String> pos = e.getTablePosition();
+//				
+//				String newValue = e.getNewValue();
+//				
+//				int row = pos.getRow();
+//				NhanVien nv = e.getTableView().getItems().get(row);
+//				if (!(newValue.length() > 0 && newValue.matches(
+//						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -,]*"))) {
+//					lblTrangThaiQLNV.setText("họ không hợp lệ! ");
+//					tableQLNV.refresh();
+//				} else {
+//					nv.setMatKhau(newValue);
+//					lblTrangThaiQLNV.setText("Đã cập nhật họ nhân viên. Bấm lưu để hoàn tất. ");
+//					
+//				}
+//				
+//			}
+//		});
+		diaChiQLNVCol.setCellValueFactory(new PropertyValueFactory<>("diaChi"));
+		diaChiQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+		diaChiQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<NhanVien, String> e) {
+
+				TablePosition<NhanVien, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				NhanVien nv = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -,]*"))) {
+					lblTrangThaiQLNV.setText("Địa chỉ không hợp lệ! ");
+					tableQLNV.refresh();
+				} else {
+					nv.setDiaChi(newValue);
+					lblTrangThaiQLNV.setText("Đã cập nhật địa chỉ. Bấm lưu để hoàn tất. ");
+
+				}
+
+			}
+		});
+		gioiTinhQLNVCol.setCellValueFactory(new PropertyValueFactory<>("gioiTinh"));
+		
+		ObservableList<String> listGT = FXCollections.observableArrayList("Nam", "Nữ");
+		
+		gioiTinhQLNVCol.setCellFactory(ComboBoxTableCell.forTableColumn(listGT));
+
+		gioiTinhQLNVCol.setOnEditCommit((CellEditEvent<NhanVien, String> event) -> {
+			TablePosition<NhanVien, String> pos = event.getTablePosition();
+
+			String newString = event.getNewValue();
+
+			int row = pos.getRow();
+			NhanVien mh = event.getTableView().getItems().get(row);
+
+			mh.setGioiTinh(newString);
+			trangThaiQLMatHang.setText("Giới tính đã cập nhật! Bấm lưu để hoàn tất.");
+		});
+		chucVuQLNVCol.setCellValueFactory(new PropertyValueFactory<>("chucVu"));
+		ObservableList<String> listChucVu = FXCollections.observableArrayList("Nhân Viên", "Quản lý");
+		
+		chucVuQLNVCol.setCellFactory(ComboBoxTableCell.forTableColumn(listChucVu));
+		
+		chucVuQLNVCol.setOnEditCommit((CellEditEvent<NhanVien, String> event) -> {
+			TablePosition<NhanVien, String> pos = event.getTablePosition();
+			
+			String newString = event.getNewValue();
+			
+			int row = pos.getRow();
+			NhanVien mh = event.getTableView().getItems().get(row);
+			
+			mh.setChucVu(newString);;
+			trangThaiQLMatHang.setText("Chức vụ đã cập nhật! Bấm lưu để hoàn tất.");
+		});
+		caLamQLNVCol.setCellValueFactory(new PropertyValueFactory<>("diaChi"));
+		caLamQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+		caLamQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<NhanVien, String> e) {
+
+				TablePosition<NhanVien, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				NhanVien nv = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -,]*"))) {
+					lblTrangThaiQLNV.setText("Ca làm không hợp lệ! ");
+					tableQLNV.refresh();
+				} else {
+					nv.setCaLam(newValue);
+					lblTrangThaiQLNV.setText("Đã cập nhật ca làm. Bấm lưu để hoàn tất. ");
+
+				}
+
+			}
+		});
+		ngayVaoLamQLNVCol.setCellValueFactory(new PropertyValueFactory<>("ngayLam"));
+		// ngayVaoLamQLNVCol.setCellFactory(TextFieldTableCell.<NhanVien>forTableColumn());
+		ngayVaoLamQLNVCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<NhanVien, Date>>() {
+
+			@Override
+			public void handle(CellEditEvent<NhanVien, Date> e) {
+
+				TablePosition<NhanVien, Date> pos = e.getTablePosition();
+
+				Date newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				NhanVien nv = e.getTableView().getItems().get(row);
+				if (!(newValue.toString().length() > 0 && newValue.toString().matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -,]*"))) {
+					lblTrangThaiQLNV.setText("Ngày vào làm không hợp lệ! ");
+					tableQLNV.refresh();
+				} else {
+					nv.setNgayLam(newValue);
+					lblTrangThaiQLNV.setText("Đã cập nhật ngày vào làm. Bấm lưu để hoàn tất. ");
+
+				}
+
+			}
+		});
+
+	}
+
+	@FXML
+	private void XuLyTimKiemQLNV() {
+
+		countQLNV = 0;
+		QLNhanVienPane.toFront();
+		startQLNV = 0;
+		endQLNV = 15;
+		pageCountQLNV = 1;
+		NhanVienDAO nvDao = new NhanVienDAO();
+		dsQLNhanVien.clear();
+		
+		
+		int countQLNV = nvDao.getNhanVien_QLNV(dsQLNhanVien, tableQLNV, txtsoCMNDQLNV, txttenQLNV, txthoQLNV,
+				txtgioiTinhQLNV, txtChucVuQLNV, txtDiaChiQLNV, txtLuongQLNV, txtmaQLNV, txtmatKhauQLNV, txtcalamQLNV,
+				txtngayVaoLamQLNV,startQLNV,endQLNV);
+		tableQLNV.setItems(dsQLNhanVien);
+		tableQLNV.refresh();
+		if (countQLNV % 15 == 0)
+			soLuongTrangQLNV = (countQLNV / 15);
+		else
+			soLuongTrangQLNV = (countQLNV / 15) + 1;
+		if (soLuongTrangQLNV == 1)
+			btnRightQLNV.setDisable(true);
+		if (countQLNV == 0)
+			tableQLNV.setPlaceholder(new Label("Không có nhân viên để hiển thị!")); // Khi bảng trống
+
+		// System.out.println(start + " " + end);
+		// System.out.println(i + " " + soLuongTrang);
+		// XuLyBangQuanLySanPham();
+		if (pageCountQLNV == soLuongTrangQLNV || soLuongTrangQLNV == 0) {
+			btnRightQLNV.setDisable(true);
+			btnLastQLNV.setDisable(true);
+		}
+
+		else {
+			btnRightQLNV.setDisable(false);
+			btnLast.setDisable(false);
+		}
+		if (pageCountQLNV == 1) {
+			btnLeftQLNV.setDisable(true);
+			btnFirstQLNV.setDisable(true);
+
+		}
+
+		else {
+			btnLeftQLNV.setDisable(false);
+			btnFirstQLNV.setDisable(false);
+
+		}
+		lblPageQLNV.setText(pageCountQLNV + "/" + soLuongTrangQLNV);
+
+		pageCountQLNV = 1;
+		if (pageCountQLNV == soLuongTrangQLNV || soLuongTrangQLNV == 0) {
+			btnRightQLNV.setDisable(true);
+			btnLastQLNV.setDisable(true);
+		}
+
+		else {
+			btnRightQLNV.setDisable(false);
+			btnLast.setDisable(false);
+		}
+		if (pageCountQLNV == 1) {
+			btnLeftQLNV.setDisable(true);
+			btnFirstQLNV.setDisable(true);
+
+		}
+
+		else {
+			btnLeftQLNV.setDisable(false);
+			btnFirstQLNV.setDisable(false);
+
+		}
+
+		lblPageQLNV.setText(pageCountQLNV + "/" + soLuongTrangQLNV);
+
+		btnRightQLNV.setOnAction(e1 -> {
+
+			pageCountQLNV = pageCountQLNV + 1;
+			if (pageCountQLNV == soLuongTrangQLNV || soLuongTrangQLNV == 0) {
+				btnRightQLNV.setDisable(true);
+				btnLastQLNV.setDisable(true);
+			}
+
+			else {
+				btnRightQLNV.setDisable(false);
+				btnLast.setDisable(false);
+			}
+			if (pageCountQLNV == 1) {
+				btnLeftQLNV.setDisable(true);
+				btnFirstQLNV.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLNV.setDisable(false);
+				btnFirstQLNV.setDisable(false);
+
+			}
+			startQLNV += 15;
+			endQLNV += 15;
+			// System.out.println(start + " " + end);
+			int count = dsQLNhanVien.size();
+			// if(count<)
+			if (count > startQLNV) {
+				if (count >= endQLNV)
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, endQLNV)));
+				else
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, count)));
+				tableQLNV.refresh();
+				lblPageQLNV.setText(pageCountQLNV + "/" + soLuongTrangQLNV);
+			}
+		});
+		btnLeftQLNV.setOnAction(e3 -> {
+
+			pageCountQLNV = pageCountQLNV - 1;
+			if (pageCountQLNV == soLuongTrangQLNV || soLuongTrangQLNV == 0) {
+				btnRightQLNV.setDisable(true);
+				btnLastQLNV.setDisable(true);
+			}
+
+			else {
+				btnRightQLNV.setDisable(false);
+				btnLast.setDisable(false);
+			}
+			if (pageCountQLNV == 1) {
+				btnLeftQLNV.setDisable(true);
+				btnFirstQLNV.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLNV.setDisable(false);
+				btnFirstQLNV.setDisable(false);
+
+			}
+			startQLNV -= 15;
+			endQLNV -= 15;
+			int count = dsQLNhanVien.size();
+			// if(count<)
+
+			// if(count<)
+			if (count > startQLNV) {
+				if (count >= endQLNV)
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, endQLNV)));
+				else
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, count)));
+				tableQLNV.refresh();
+				lblPageQLNV.setText(pageCountQLNV + "/" + soLuongTrangQLNV);
+			}
+		});
+
+		btnFirstQLNV.setOnAction(e -> {
+
+			pageCountQLNV = 1;
+			if (pageCountQLNV == soLuongTrangQLNV || soLuongTrangQLNV == 0) {
+				btnRightQLNV.setDisable(true);
+				btnLastQLNV.setDisable(true);
+			}
+
+			else {
+				btnRightQLNV.setDisable(false);
+				btnLast.setDisable(false);
+			}
+			if (pageCountQLNV == 1) {
+				btnLeftQLNV.setDisable(true);
+				btnFirstQLNV.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLNV.setDisable(false);
+				btnFirstQLNV.setDisable(false);
+
+			}
+			startQLNV = 0;
+			endQLNV = 15;
+
+			int count = dsQLNhanVien.size();
+			// if(count<)
+			if (count > startQLNV) {
+				if (count >= endQLNV)
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, endQLNV)));
+				else
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, count)));
+				tableQLNV.refresh();
+				lblPageQLNV.setText(pageCountQLNV + "/" + soLuongTrangQLNV);
+			}
+
+		});
+		btnLastQLNV.setOnAction(e -> {
+
+			pageCountQLNV = soLuongTrangQLNV;
+			if (pageCountQLNV == soLuongTrangQLNV || soLuongTrangQLNV == 0) {
+				btnRightQLNV.setDisable(true);
+				btnLastQLNV.setDisable(true);
+			}
+
+			else {
+				btnRightQLNV.setDisable(false);
+				btnLastQLNV.setDisable(false);
+			}
+			if (pageCountQLNV == 1) {
+				btnLeftQLNV.setDisable(true);
+				btnFirstQLNV.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLNV.setDisable(false);
+				btnFirstQLNV.setDisable(false);
+
+			}
+			startQLNV = (soLuongTrangQLNV - 1) * 15;
+			endQLNV = (soLuongTrangQLNV - 1) * 15 + 15;
+			// System.out.println(start + " " + end);
+			int count = dsQLNhanVien.size();
+			// if(count<)
+			if (count > startQLNV) {
+				if (count >= endQLNV)
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, endQLNV)));
+				else
+					tableQLNV.setItems(FXCollections.observableArrayList(dsQLNhanVien.subList(startQLNV, count)));
+				tableQLNV.refresh();
+				lblPageQLNV.setText(pageCountQLNV + "/" + soLuongTrangQLNV);
+			}
+			lblPageQLNV.setText(pageCountQLNV + "/" + soLuongTrangQLNV);
+		});
+	}
+
+	private void XuLyThongKeKhachHang_BackGr() {
+		LocalDate dateNow = LocalDate.now();
+
+		dpToTKKH.setValue(dateNow);
+		dpkFromTKKH.setValue(dateNow);
+
+		dpToTKKH.setOnAction(e -> {
+			if (dpkFromTKKH.getValue().isAfter(dpToTKKH.getValue()) == true && dpkFromTKKH.getValue() != null)
+				dpToTKKH.setValue(dpkFromTKKH.getValue());
+			XuLyThongKeKhachHang();
+
+		});
+		dpkFromTKKH.setOnAction(e -> {
+			if (dpkFromTKKH.getValue().isAfter(dpToTKKH.getValue()) == true && dpToTKKH.getValue() != null)
+				dpkFromTKKH.setValue(dpToTKKH.getValue());
+			XuLyThongKeKhachHang();
+
+		});
+		cbbGioiTinhKH.setItems(listThongKeGTKH);
+		cbbGioiTinhKH.getSelectionModel().selectFirst();
+		cbbGioiTinhKH.setOnAction(e -> {
+			XuLyThongKeKhachHang();
+		});
+
+		txtTopTKKH.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLytxtTop();
+			}
+
+		});
+
+	}
+
+	private void XuLyThongKeKhachHang() {
+		XuLyBangThongKeKH();
+		btnMacDinhKH.setOnAction(e -> {
+			XuLyThongKeKhachHang_BackGr();
+
+		});
+
+	}
+
+	private void XuLyBangThongKeKH() {
+		KhachHangDAO khDao = new KhachHangDAO();
+		khDao.getDSKH_ThongKe(dpkFromTKKH, dpToTKKH, txtTopTKKH, cbbGioiTinhKH, listThongKeKH, tableTKKH);
+		tableTKKH.setEditable(false);
+		tableTKKH.setItems(listThongKeKH);
+		soCMNFTKKHCol.setCellValueFactory(new PropertyValueFactory<>("soCMND"));
+		tenTKKHCol.setCellValueFactory(new PropertyValueFactory<>("tenKH"));
+
+		hoTKKHCol.setCellValueFactory(new PropertyValueFactory<>("hoKH"));
+
+		tongTienMuaTKKHCol.setCellValueFactory(new PropertyValueFactory<>("gioiTinh"));
+		SoLanMuaTKKHCol.setCellValueFactory(new PropertyValueFactory<>("soDT"));
+
+		topTKKHCol.setCellValueFactory(new PropertyValueFactory<>("diaChi"));
+
+	}
+
+	private void XuLytxtTop() {
+		if (txtTopTKKH.getText().length() > 0) {
+			String s = txtTopTKKH.getText();
+			try {
+				Integer i = Integer.parseInt(s);
+				XuLyThongKeKhachHang();
+			} catch (Exception e2) {
+				dialogThongBao.setVisible(true);
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.toFront();
+				lblDialogTitle.setText("DỮ LIỆU KHÔNG ĐÚNG");
+				lblDialogContent.setText("Top phải là số nguyên > 0");
+				btnYes.setVisible(false);
+				btnNo.setText("Thoát");
+				btnNo.setOnAction(e3 -> {
+					btnYes.setVisible(true);
+					txtTopTKKH.requestFocus();
+					dialogThongBao.setVisible(false);
+					dialog.setVisible(false);
+					dialog.toBack();
+					;
+					dialogThongBao.toBack();
+					btnNo.setText("Không");
+
+				});
+
+			}
+
+		}
+
+	}
+
+	@FXML
+	private void XuLyThongKeMatHang_BackGr() {
+		System.out.println("Đã vào xử lý backgr");
+		LocalDate dateNow = LocalDate.now();
+		cbbTKMatHang.setItems(listThongKeMatHang);
+		cbbTKMatHang.getSelectionModel().selectFirst();
+		dpToTKMH.setValue(dateNow);
+		dpkFromTKMH.setValue(dateNow);
+
+		dpToTKMH.setOnAction(e -> {
+			if (dpkFromTKMH.getValue().isAfter(dpToTKMH.getValue()) == true && dpkFromTKMH.getValue() != null)
+				dpToTKMH.setValue(dpkFromTKMH.getValue());
+			XuLyThongKeMatHang();
+
+		});
+		dpkFromTKMH.setOnAction(e -> {
+			if (dpkFromTKMH.getValue().isAfter(dpToTKMH.getValue()) == true && dpToTKMH.getValue() != null)
+				dpkFromTKMH.setValue(dpToTKMH.getValue());
+			XuLyThongKeMatHang();
+
+		});
+
+		// lblTKDoanhThu.setText("Thống kê doanh thu và lợi nhuận theo ngày. Từ: "+
+		// dpkFromTKMH.getValue().toString()+ " đến: "+ dpToTKMH.getValue().toString());
+		cbbTKMatHang.setOnAction(e -> {
+			XuLyThongKeMatHang();
+		});
+		btnMacDinhMH.setOnAction(e -> {
+			XuLyThongKeMatHang_BackGr();
+		});
+
+		XuLyThongKeMatHang();
+
+	}
+
+	private void XuLyThongKeMatHang() {
+		barCharMatHang.getData().clear();
+		XYChart.Series<String, Integer> dsTKMatHang = new XYChart.Series<>();
+		MatHangDAO mhDao = new MatHangDAO();
+
+		mhDao.getTopMatHang(dsTKMatHang, dpkFromTKMH, dpToTKMH, cbbTKMatHang);
+
+		barCharMatHang.getData().add(dsTKMatHang);
+
+		dsTKMatHang.setName("Top " + dsTKMatHang.getData().size() + " xe bán chạy nhất");
+		// dsThongKeDoanhThu.setName("Tổng tiền hoá đơn");
+		barCharMatHang.setAnimated(false);
+		for (Data<String, Integer> entry : dsTKMatHang.getData()) {
+
+			Tooltip t = new Tooltip("Số lượng: " + entry.getYValue());
+
+			Node node = entry.getNode();
+			Tooltip.install(node, t);
+		}
+	}
+
+	private void XuLyQLKH() {
+		XuLyBangQLKH();
+		XuLyActionTimKiemKhachHang();
+		txtsoCMNDQLKH.setOnKeyPressed(e -> {
+			XuLyActionTimKiemKhachHang();
+		});
+		txthoQLKH.setOnKeyPressed(e -> {
+			XuLyActionTimKiemKhachHang();
+		});
+		txttenQLKH.setOnKeyPressed(e -> {
+			XuLyActionTimKiemKhachHang();
+		});
+		txtgioiTinhQLKH.setOnKeyPressed(e -> {
+			XuLyActionTimKiemKhachHang();
+		});
+		txtSoDTQLKH.setOnKeyPressed(e -> {
+			XuLyActionTimKiemKhachHang();
+		});
+		txtDiaChiQLKH.setOnKeyPressed(e -> {
+			XuLyActionTimKiemKhachHang();
+		});
+		btnXoaTrangQLKH.setOnAction(e -> {
+			txtsoCMNDQLKH.setText("");
+			txtDiaChiQLKH.setText("");
+			txtgioiTinhQLKH.setText("");
+			txthoQLKH.setText("");
+			txttenQLKH.setText("");
+			txtSoDTQLKH.setText("");
+			XuLyActionTimKiemKhachHang();
+			lblTrangThaiQLKH.setText("");
+		});
+
+		KhachHangDAO qlkhdao = new KhachHangDAO();
+
+		qlkhdao.getDSKhachHang_Loc(txtsoCMNDQLKH, txttenQLKH, txthoQLKH, txtgioiTinhQLKH, txtDiaChiQLKH, txtSoDTQLKH,
+				dsQLKhachHang, tableQLKhachHang, startQLKH, endQLKH);
+		;
+		tableQLKhachHang.setItems(dsQLKhachHang);
+		tableQLKhachHang.setOnMouseClicked(e -> {
+
+			KhachHang selectKH = tableQLKhachHang.getSelectionModel().getSelectedItem();
+			if (selectKH != null) {
+				txtsoCMNDQLKH.setText(selectKH.getSoCMND());
+				txtDiaChiQLKH.setText(selectKH.getDiaChi());
+				txtgioiTinhQLKH.setText(selectKH.getGioiTinh());
+				txthoQLKH.setText(selectKH.getHoKH());
+				txttenQLKH.setText(selectKH.getTenKH());
+				txtSoDTQLKH.setText(selectKH.getSoDT());
+
+			}
+
+			// ObservableList selectedCells = selectionModel.getSelectedCells();
+		});
+		tableQLKhachHang.setOnKeyPressed(e2 -> {
+			KhachHang selectKH = tableQLKhachHang.getSelectionModel().getSelectedItem();
+			if (selectKH != null) {
+				txtsoCMNDQLKH.setText(selectKH.getSoCMND());
+				txtDiaChiQLKH.setText(selectKH.getDiaChi());
+				txtgioiTinhQLKH.setText(selectKH.getGioiTinh());
+				txthoQLKH.setText(selectKH.getHoKH());
+				txttenQLKH.setText(selectKH.getTenKH());
+				txtSoDTQLKH.setText(selectKH.getSoDT());
+
+			}
+
+		});
+		btnLuuQLKH.setOnAction(e->{
+			for (int i = 0; i < dsQLKhachHang.size(); i++) {
+				KhachHang kh= dsQLKhachHang.get(i);
+				qlkhdao.CapNhat_KhachHang(kh);
+				lblTrangThaiQLKH.setText("Đang lưu thay đổi...");
+				
+			}
+			lblTrangThaiQLKH.setText("Lưu hoàn tất!");
+			
+		});
+		btnThemQLKH.setOnAction(e -> {
+			boolean check = XuLyActionThemKhachHangMoi();
+			if (check == true) {
+				lblTrangThaiQLKH.setText("*THÊM THÀNH CÔNG KHÁCH HÀNG: " + txthoQLKH.getText().trim() + " "
+						+ txttenQLKH.getText().trim());
+
+			} else {
+
+				lblTrangThaiQLKH.setText("*THÊM KHÁCH HÀNG THẤT BẠI!");
+
+			}
+		});
+
+	}
+
+	private void XuLyBangQLKH() {
+		tableQLKhachHang.setEditable(true);
+		soCMNDCol.setCellValueFactory(new PropertyValueFactory<>("soCMND"));
+		tenKHCol.setCellValueFactory(new PropertyValueFactory<>("tenKH"));
+		tenKHCol.setCellFactory(TextFieldTableCell.<KhachHang>forTableColumn());
+
+		tenKHCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<KhachHang, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<KhachHang, String> e) {
+
+				TablePosition<KhachHang, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				KhachHang kh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches("^[\\p{L} .'-]+$"))) {
+					tableQLKhachHang.refresh();
+					lblTrangThaiQLKH.setText("Tên khách hàng chưa chính xác!");
+				} else {
+					kh.setTenKH(newValue);
+					lblTrangThaiQLKH.setText("Tên khách cập nhật thành công. Bấm lưu để hoàn tất");
+				}
+
+			}
+		});
+		hoKHCol.setCellValueFactory(new PropertyValueFactory<>("hoKH"));
+		hoKHCol.setCellFactory(TextFieldTableCell.<KhachHang>forTableColumn());
+
+		hoKHCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<KhachHang, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<KhachHang, String> e) {
+
+				TablePosition<KhachHang, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				KhachHang kh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z ]*"))) {
+					tableQLKhachHang.refresh();
+					lblTrangThaiQLKH.setText("Họ khách hàng chưa chính xác!");
+				} else {
+					kh.setHoKH(newValue);
+					lblTrangThaiQLKH.setText("Họ khách cập nhật thành công. Bấm lưu để hoàn tất");
+				}
+
+			}
+		});
+		gioiTinhKHCol.setCellValueFactory(new PropertyValueFactory<>("gioiTinh"));
+	
+
+		gioiTinhKHCol.setCellFactory(TextFieldTableCell.<KhachHang>forTableColumn());
+
+		gioiTinhKHCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<KhachHang, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<KhachHang, String> e) {
+
+				TablePosition<KhachHang, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				KhachHang kh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 &&(newValue.equals("Nam")==true || newValue.equals("Nữ")==true))) {
+
+					lblTrangThaiQLKH.setText("Giới tính khách hàng chưa chính xác!");
+					tableQLKhachHang.refresh();
+				} else {
+					kh.setGioiTinh(newValue);
+					lblTrangThaiQLKH.setText("Giói tính khách cập nhật thành công. Bấm lưu để hoàn tất");
+				}
+				
+			}
+		});
+		diaChiKHCol.setCellValueFactory(new PropertyValueFactory<>("diaChi"));
+
+		diaChiKHCol.setCellFactory(TextFieldTableCell.<KhachHang>forTableColumn());
+
+		diaChiKHCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<KhachHang, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<KhachHang, String> e) {
+
+				TablePosition<KhachHang, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				KhachHang kh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches("[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z0-9,/ ]*"
+						))) {
+
+					lblTrangThaiQLKH.setText("Địa chỉ khách hàng chưa chính xác!");
+					tableQLKhachHang.refresh();
+				} else {
+					kh.setDiaChi(newValue);
+					lblTrangThaiQLKH.setText("Địa chỉ khách cập nhật thành công. Bấm lưu để hoàn tất");
+				}
+				
+			}
+		});
+		sDTKHCol.setCellValueFactory(new PropertyValueFactory<>("soDT"));
+
+		sDTKHCol.setCellFactory(TextFieldTableCell.<KhachHang>forTableColumn());
+		//Đang08
+		sDTKHCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<KhachHang, String>>() {
+
+			@Override
+			public void handle(CellEditEvent<KhachHang, String> e) {
+
+				TablePosition<KhachHang, String> pos = e.getTablePosition();
+
+				String newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				KhachHang kh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches("((0){1}|(\\+\\d{2,3}){1})\\d{9}"))) {
+
+					lblTrangThaiQLKH.setText("Số điện thoại chưa chính xác!");
+					tableQLKhachHang.refresh();
+				} else {
+					kh.setSoDT(newValue);
+					lblTrangThaiQLKH.setText("Số điện thoại cập nhật thành công. Bấm lưu để hoàn tất");
+				}
+				
+			}
+		});
+
+	}
+
+	private boolean XuLyActionThemKhachHangMoi() {
+		if (KiemTraRegexThemKHMoi() == true) {
+			KhachHangDAO khDAO = new KhachHangDAO();
+			String soCMND = txtsoCMNDQLKH.getText().trim();
+			String hoKH = txthoQLKH.getText().trim();
+			String tenKH = txttenQLKH.getText().trim();
+			String soDTKH = txtSoDTQLKH.getText().trim();
+			String diaChiKH = txtDiaChiQLKH.getText().trim();
+			String gioiTinh = txtgioiTinhQLKH.getText().trim();
+			KhachHang kh = new KhachHang(soCMND, hoKH, tenKH, diaChiKH, soDTKH, gioiTinh);
+			boolean check = khDAO.themKhachHang(kh);
+			if (check == true) {
+				XuLyQLKH();
+				khDAO.getDSKhachHang_Loc(txtsoCMNDQLKH, txttenQLKH, txthoQLKH, txtgioiTinhQLKH, txtDiaChiQLKH,
+						txtSoDTQLKH, dsQLKhachHang, tableQLKhachHang, startQLKH, endQLKH);
+				tableQLKhachHang.getItems().add(kh);
+				tableQLKhachHang.getSelectionModel().select(kh);
+				System.out.println(kh.toString());
+				return true;
+			} else {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+				lblDialogTitle.setText("KHÁCH HÀNG ĐÃ TỒN TẠI!");
+				lblDialogContent.setText("Số CMND hoặc số thẻ căn cước đã tồn tại.");
+				txtsoCMNDQLKH.requestFocus();
+				btnYes.setVisible(false);
+				btnNo.setText("Thoát");
+				btnNo.setOnAction(e2 -> {
+					dialog.setVisible(false);
+					// dialog.setVisible(false);
+					dialog.toBack();
+					btnNo.setText("Không");
+					btnYes.setVisible(true);
+					dialogThongBao.setVisible(false);
+				});
+				return false;
+			}
+
+		} else
+			return false;
+	}
+
+	private boolean KiemTraRegexThemKHMoi() {
+		String soCMND = txtsoCMNDQLKH.getText().trim();
+		String hoKH = txthoQLKH.getText().trim();
+		String tenKH = txttenQLKH.getText().trim();
+		String soDTKH = txtSoDTQLKH.getText().trim();
+		String diaChiKH = txtDiaChiQLKH.getText().trim();
+		String gt = txtgioiTinhQLKH.getText().trim();
+		if (!(tenKH.length() > 0 && tenKH.matches("^[\\p{L} .'-]+$"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Tên khách hàng không đúng!");
+			lblDialogContent.setText("tên khách hàng không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txttenQLKH);
+			return false;
+		}
+		if (!(hoKH.length() > 0 && hoKH.matches(
+				"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z ]*"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Họ khách hàng không đúng!");
+			lblDialogContent.setText("Họ khách hàng không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txthoQLKH);
+			return false;
+		}
+		if (soCMND.length() > 0) {
+			if (!soCMND.matches("\\d{9}|\\d{12}")) {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+				lblDialogTitle.setText("Số CMND/ Căn cước không đúng!");
+				lblDialogContent.setText(
+						"Sô cmnd/ Thẻ căn cước phải là số và không được để trống. Lưu ý: Số CMND có 9 số, thẻ căn cướccos 12 số. ");
+
+				XuLyBtnNoRegex(txtsoCMNDQLKH);
+				return false;
+			}
+		} else {
+
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Số CMND/ Căn cước trống!");
+			lblDialogContent.setText("Sô cmnd/ Thẻ căn cước phải là số và không được để trống!");
+
+			XuLyBtnNoRegex(txtsoCMNDQLKH);
+
+			return false;
+		}
+	
+		
+		if (!(diaChiKH.length() > 0 && diaChiKH.matches(
+				"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z0-9,/ ]*"))) {
+			// địa chỉ có kiểu X/Y/Z tên đường, tên phường, tên quận, tên thành phố : 65/3
+			// Phạm Văn Bach, Phường 12, Quận Tân Bình, tp Hồ Chính Minh
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Địa chỉ không đúng!");
+			lblDialogContent.setText("Địa chỉ không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txtDiaChiQLKH);
+			return false;
+		}
+		if (soDTKH.length() > 0) {
+			if (!soDTKH.matches("((0){1}|(\\+\\d{2,3}){1})\\d{9}")) {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+				lblDialogTitle.setText("Số điện thoại không đúng!");
+				lblDialogContent.setText(
+						"Sô điện thoại phải là số và không được để trống. Lưu ý: Số điện thoại nước noài có dấu + ở đầu dòng.");
+
+				XuLyBtnNoRegex(txtSoDTQLKH);
+				return false;
+			}
+		} else {
+
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Số điện thoại trống!");
+			lblDialogContent.setText("Sô điện thoại phải là số và không được để trống!");
+
+			XuLyBtnNoRegex(txtSoDTQLKH);
+
+			return false;
+		}
+		if(!(gt.length()>0)) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Giới tính trống!");
+			lblDialogContent.setText("Giới tính phải là Nam hoặc Nữ và không được để trống!");
+
+			XuLyBtnNoRegex(txtgioiTinhQLKH);
+		}
+		else {
+			if(gt.equals("Nam")==true || gt.equals("Nữ")==true) {
+				
+				
+			}
+			else {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+//				ialogContent.setText("Giới tính phải là Nam hoặc Nữ và không được để trống!");
+
+				XuLyBtnNoRegex(txtgioiTinhQLKH);
+				lblDialogTitle.setText("Giới tính sai!");
+				lblDialogContent.setText("Giới tính phải là Nam hoặc Nữ và không được để trống!");
+				return false;
+			}
+		}
+		
+
+		return true;
+	}
+
+	@FXML
 	private void XuLyThongKeDoanhThu_Backgr() {
 		LocalDate dateNow = LocalDate.now();
 
@@ -938,6 +2498,11 @@ public class MHLVChinhController implements Initializable {
 		});
 		cbbTKDoanhThu.setItems(listThongKeDoanhThu);
 		cbbTKDoanhThu.setValue("Ngày");
+		lblTKDoanhThu.setText("Thống kê doanh thu và lợi nhuận theo ngày. Từ: " + dpkFromTKDT.getValue().toString()
+				+ " đến: " + dpToTKDT.getValue().toString());
+
+		XuLyThongKeDoanhThu();
+
 	}
 
 	@FXML
@@ -949,8 +2514,24 @@ public class MHLVChinhController implements Initializable {
 		XYChart.Series<String, Double> dsLoiNhuanDoanhThu = new XYChart.Series<>();
 
 		// XYChart<String, Double>
+		if (cbbTKDoanhThu.getSelectionModel().getSelectedIndex() == 0) {
+			hdDao.getDSHoaDon_ThongKeDoanhThu_Ngay(dsThongKeDoanhThu, dsLoiNhuanDoanhThu, dpkFromTKDT, dpToTKDT);
+			lblTKDoanhThu.setText("Thống kê doanh thu và lợi nhuận theo ngày.");
 
-		hdDao.getDSHoaDon_ThongKeDoanhThu_Ngay(dsThongKeDoanhThu, dsLoiNhuanDoanhThu, dpkFromTKDT, dpToTKDT);
+		}
+
+		else if (cbbTKDoanhThu.getSelectionModel().getSelectedIndex() == 1) {
+			hdDao.getDSHoaDon_ThongKeDoanhThu_Thang(dsThongKeDoanhThu, dsLoiNhuanDoanhThu, dpkFromTKDT, dpToTKDT);
+			lblTKDoanhThu.setText("Thống kê doanh thu và lợi nhuận theo tháng.");
+		} else if (cbbTKDoanhThu.getSelectionModel().getSelectedIndex() == 2) {
+			hdDao.getDSHoaDon_ThongKeDoanhThu_Quy(dsThongKeDoanhThu, dsLoiNhuanDoanhThu, dpkFromTKDT, dpToTKDT);
+			lblTKDoanhThu.setText("Thống kê doanh thu và lợi nhuận theo quý. ");
+
+		} else if (cbbTKDoanhThu.getSelectionModel().getSelectedIndex() == 3) {
+			hdDao.getDSHoaDon_ThongKeDoanhThu_Nam(dsThongKeDoanhThu, dsLoiNhuanDoanhThu, dpkFromTKDT, dpToTKDT);
+			lblTKDoanhThu.setText("Thống kê doanh thu và lợi nhuận theo năm. ");
+
+		}
 		lineChartDoanhThu.getData().add(dsThongKeDoanhThu);
 		lineChartDoanhThu.getData().add(dsLoiNhuanDoanhThu);
 		dsLoiNhuanDoanhThu.setName("Lợi nhuận");
@@ -995,9 +2576,9 @@ public class MHLVChinhController implements Initializable {
 		XuLySuKienQuanLyHoaDon();
 		HoaDonDAO hdDao = new HoaDonDAO();
 		tableQLHD_HD.setItems(dsHoaDonQLHD);
-		hdDao.getDSHoaDon(txtSoCMNDKHQLHD, txtHoKHQLHD, txtTenKHQLHD, txtSoDTKHQLHD, txtMANVQLHD, txtMAHDQLHD,
-				dpkFromQLHD, dpktoQLHD, tableQLHD_HD, dsHoaDonQLHD);
-		tableQLHD_HD.refresh();
+//		hdDao.getDSHoaDon(txtSoCMNDKHQLHD, txtHoKHQLHD, txtTenKHQLHD, txtSoDTKHQLHD, txtMANVQLHD, txtMAHDQLHD,
+//				dpkFromQLHD, dpktoQLHD, tableQLHD_HD, dsHoaDonQLHD);
+//		tableQLHD_HD.refresh();
 
 		tableQLHD_CTHD.setItems(dsCTHD_QLHD);
 		// Đầu tiên, xử lý bảng QLHD
@@ -1019,69 +2600,32 @@ public class MHLVChinhController implements Initializable {
 			XuLyActionTimKiemHoaDon();
 		});
 
-		txtSoCMNDKHQLHD.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					XuLyActionTimKiemHoaDon();
-				}
-
-			}
-
+		txtSoCMNDKHQLHD.setOnKeyPressed(e -> {
+			XuLyActionTimKiemHoaDon();
 		});
-		txtSoCMNDKHQLHD.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					XuLyActionTimKiemHoaDon();
-				}
-			}
+		txtSoCMNDKHQLHD.setOnKeyPressed(e -> {
+			XuLyActionTimKiemHoaDon();
 		});
 
-		txtHoKHQLHD.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					XuLyActionTimKiemHoaDon();
-				}
-			}
+		txtHoKHQLHD.setOnKeyPressed(e -> {
+			XuLyActionTimKiemHoaDon();
 		});
 
-		txtTenKHQLHD.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					XuLyActionTimKiemHoaDon();
-				}
-			}
+		txtTenKHQLHD.setOnKeyPressed(e -> {
+			XuLyActionTimKiemHoaDon();
 		});
 
-		txtSoDTKHQLHD.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					XuLyActionTimKiemHoaDon();
-				}
-			}
+		txtSoDTKHQLHD.setOnKeyPressed(e -> {
+			XuLyActionTimKiemHoaDon();
 		});
 
-		txtMANVQLHD.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					XuLyActionTimKiemHoaDon();
-				}
-			}
+		txtMANVQLHD.setOnKeyPressed(e -> {
+			XuLyActionTimKiemHoaDon();
 		});
 
-		txtMAHDQLHD.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					XuLyActionTimKiemHoaDon();
-				}
-			}
+		txtMAHDQLHD.setOnKeyPressed(e -> {
+			XuLyActionTimKiemHoaDon();
+
 		});
 		btnXoaTrangQLHD.setOnAction(e -> {
 			txtSoCMNDKHQLHD.setText("");
@@ -1135,21 +2679,27 @@ public class MHLVChinhController implements Initializable {
 		}
 
 		// URL filePath = ClassLoader.getSystemResource("/Path.txt");
-
+		menuCaiDat.setVisible(false);
+		dialog.setVisible(false);
 		About.setVisible(false);
 		About.toBack();
 		lblLGStatus.setVisible(false);
-
+		dialogDoiMatKhau.setVisible(false);
+		dialogDoiMatKhau.toBack();
 		LoginPane.setCenterShape(true);
 		MenuPane.setVisible(false);
 		dialog.setVisible(false);
 		dialogValue.setVisible(false);
 		dialogThongBao.setVisible(false);
 		MatHangDAO matHangDAO = new MatHangDAO();
+		btnHideunPassLogin.setGraphic(new ImageView(new Image("img/unmask.png")));
+		btnHideunPassLogin.setOnAction(e -> {
+			XuLyBtnUnMasKLogin();
+		});
 
 		btnChucNang1.setGraphic(new ImageView(image));
-		btnChucNang2.setGraphic(new ImageView(image2));
-		btnChucNang3.setGraphic(new ImageView(image3));
+		btnChucNang2.setGraphic(new ImageView(image3));
+		btnChucNang3.setGraphic(new ImageView(image2));
 		btnChucNang4.setGraphic(new ImageView(image4));
 		btnChucNang1.setText("Text");
 		btnQuayLai.setGraphic(new ImageView(new Image("img/back.png")));
@@ -1158,40 +2708,13 @@ public class MHLVChinhController implements Initializable {
 		btnLuu.setGraphic(new ImageView(new Image("img/save.png")));
 		btnXoaTrang.setGraphic(imgXT);
 		btnHoanTac.setGraphic(imgHT);
-		btnLuu.setOnAction(e -> {
-
-		});
-		btnHoanTac.setOnAction(e -> {
-			txtMaNVTT.setText(nv.getMaNV().toString());
-
-			txtHoNVTT.setText(nv.getHoNV());
-
-			txtTenNVTT.setText(nv.getTenNV());
-
-			txtChucVuNVTT.setText(nv.getChucVu());
-
-			txtLuongNVTT.setText(formatter.format(nv.getLuong()));
-
-			txtCaLamNVTT.setText(nv.getCaLam());
-
-			txtNgayVaoLamNVTT.setText(nv.getNgayLam().toString());
-
-			txtDiaChiNVTT.setText(nv.getDiaChi());
-			NhanVienDAO nhanVienDao = new NhanVienDAO();
-			dsGioiTinhNVTT = nhanVienDao.getDSGioiTinh();
-			cbbGioiTinhNVTT.setItems(dsGioiTinhNVTT);
-			cbbGioiTinhNVTT.requestFocus();
-			cbbGioiTinhNVTT.setValue(nv.getGioiTinh());
-			txthideMatKhauNVTT.setText(nv.getMatKhau());
-
-			// txtMatKhauNVTT.setText(nv.getMatKhau());
-			txtsoCMNDNVTT.setText(nv.getSoCMND());
-
-		});
 
 		// ================hết==THÔNG TIN CÁ NHÂN=======================
 		// ===================THÊM HOÁ ĐƠN=========================================
 		btnTTKH.setGraphic(new ImageView(new Image("img/whiteUSER.png")));
+		btnXoaGioHang.setGraphic(new ImageView(new Image("img/delete.png")));
+		btnXoaSPGioHang.setGraphic(new ImageView(new Image("img/remove.png")));
+		btnTaoHoaDon.setGraphic(new ImageView(new Image("img/billwhite.png")));
 
 		// =================THÊM SẢN PHẨM===========================
 		btnGioHang.setGraphic(new ImageView(imageshopping));
@@ -1276,184 +2799,12 @@ public class MHLVChinhController implements Initializable {
 		jcbGiaThanh1.setValue("Tất cả");
 		jcbDongXe1.setItems(listDongXe);
 		jcbDongXe1.setValue("Tất cả");
-		// jlistView.getSelectionModel().select(" Tìm kiếm sản phẩm");
+
 		btnGioHang.setGraphic(new ImageView(imageshopping));
-		// jlistView.setItems(list);
 
 		// ============xử lý bảng GIỎ HÀNG=============
-		maGioHang.setCellValueFactory(new PropertyValueFactory<>("maMatHang"));
-		soLuongGioHang.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
-		// soLuongGioHang.setCellValueFactory(new PropertyValueFactory<>("maMatHang"));
 
-//		maSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
-//
-//			@Override
-//			public void handle(CellEditEvent<MatHang, String> e) {
-//				
-//				TablePosition<MatHang, String> pos = e.getTablePosition();
-//
-//				String newValue = e.getNewValue();
-//
-//				int row = pos.getRow();
-//				MatHang mh = e.getTableView().getItems().get(row);
-//
-//				mh.setMaMatHang(newValue);
-//			}
-//		});
-
-		soLuongGioHang.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-		soLuongGioHang.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<CTHD, Integer>>() {
-
-			@Override
-			public void handle(CellEditEvent<CTHD, Integer> e) {
-
-				TablePosition<CTHD, Integer> pos = e.getTablePosition();
-
-				Integer newValue = e.getNewValue();
-
-				int row = pos.getRow();
-				CTHD mh = e.getTableView().getItems().get(row);
-				MatHang chekmh = matHangDAO.getMatHangg(mh.getMaMatHang());
-				if (chekmh.getSoLuong() >= newValue) {
-					mh.setSoLuong(newValue);
-					mh.getThanhTien();
-
-					price = 0.0;
-					thanhtienGioHang = 0.0;
-					for (CTHD cthd : dsGioHang) {
-						thanhtienGioHang += cthd.getThanhTien();
-						MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
-						Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
-						price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
-
-					}
-					// CTHD hd = c.getTableView().getItems().get(this.getIndex());
-
-					txtTongTienThemHD.setText(formatter.format(price));
-					//
-					lblTongTienGH.setText(formatter.format(thanhtienGioHang));
-					tableGioHang.refresh();
-					tableLapHoaDon.refresh();
-
-				} else {
-
-					dialog.toFront();
-					dialogThongBao.setVisible(true);
-					dialogThongBao.toFront();
-					dialog.setVisible(true);
-					lblDialogTitle.setText("SỐ LƯỢNG VƯỢT QUÁ QUY ĐỊNH! ");
-					lblDialogContent.setText(
-							"Số lượng không vượt quá: " + chekmh.getSoLuong() + " \n Bạn có muốn nhập lại không?");
-					btnNo.setDisable(true);
-					btnYes.setOnAction(e2 -> {
-
-						dialog.setVisible(false);
-						dialogThongBao.setVisible(false);
-						tableGioHang.refresh();
-						btnNo.setDisable(false);
-						thanhtienGioHang = 0.0;
-
-						lblTongTienGH.setText(formatter.format(thanhtienGioHang));
-
-						price = 0.0;
-						thanhtienGioHang = 0.0;
-						for (CTHD cthd : dsGioHang) {
-							thanhtienGioHang += cthd.getThanhTien();
-							MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
-							Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
-							price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
-
-						}
-						// CTHD hd = c.getTableView().getItems().get(this.getIndex());
-
-						txtTongTienThemHD.setText(formatter.format(price));
-						//
-						lblTongTienGH.setText(formatter.format(thanhtienGioHang));
-						tableGioHang.refresh();
-						tableLapHoaDon.refresh();
-						//
-
-					});
-				}
-			}
-		});
-		// soLuongGioHang.setCellFactory(TextFieldTableCell.<CTHD>forTableColumn());
-		donGiaGioHang.setCellValueFactory(new PropertyValueFactory<>("donGia"));
-		thanhTienGioHang.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
-		giamGiaGioHang.setCellValueFactory(new PropertyValueFactory<>("giamGia"));
-		giamGiaGioHang.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-		giamGiaGioHang.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<CTHD, Double>>() {
-
-			@Override
-			public void handle(CellEditEvent<CTHD, Double> e) {
-
-				TablePosition<CTHD, Double> pos = e.getTablePosition();
-
-				Double newValue = e.getNewValue();
-
-				int row = pos.getRow();
-				CTHD mh = e.getTableView().getItems().get(row);
-				// MatHang chekmh = matHangDAO.getMatHangg(mh.getMaMatHang());
-				if (newValue >= 0)
-					mh.setGiamGia(newValue);
-				mh.getThanhTien();
-				thanhtienGioHang = 0.0;
-
-				// lblTongTienGH.setText(formatter.format(thanhtienGioHang));
-
-				price = 0.0;
-				thanhtienGioHang = 0.0;
-				for (CTHD cthd : dsGioHang) {
-					thanhtienGioHang += cthd.getThanhTien();
-					MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
-					Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
-					price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
-
-				}
-				System.out.println(price);
-				txtTongTienThemHD.setText(formatter.format(price));
-
-				lblTongTienGH.setText(formatter.format(thanhtienGioHang));
-				tableGioHang.refresh();
-				tableLapHoaDon.refresh();
-
-			}
-		});
-
-		donGiaGioHang.setCellFactory(c -> {
-			return new TableCell<CTHD, Double>() {
-				@Override
-				protected void updateItem(Double price, boolean empty) {
-					super.updateItem(price, empty);
-					if (empty) {
-						setText(null);
-					} else {
-						setText(formatter.format(price));
-					}
-				}
-			};
-		});
-		// thanhTienGioHang1.setCellValueFactory(new
-		// PropertyValueFactory<>("thanhTien"));
-		thanhTienGioHang.setCellFactory(c -> {
-			return new TableCell<CTHD, Double>() {
-				@Override
-				protected void updateItem(Double price, boolean empty) {
-					super.updateItem(price, empty);
-					if (empty) {
-						setText(null);
-					} else {
-						setText(formatter.format(price));
-					}
-				}
-			};
-		});
-		tableGioHang.setEditable(true);
-		tableGioHang.setItems(dsGioHang);
-		tableGioHang.setPlaceholder(new Label("Giỏ hàng trống!"));
-		tableGioHang.setOnMouseClicked(e -> {
-
-		});
+		XuLyTableGioHang();
 
 		// =================XỬ LÝ BẢNG LẬP HOÁ ĐƠN=============================
 		maGioHang1.setCellValueFactory(new PropertyValueFactory<>("maMatHang"));
@@ -1596,21 +2947,7 @@ public class MHLVChinhController implements Initializable {
 		gioiTinhKHCol.setCellValueFactory(new PropertyValueFactory<>("gioiTinh"));
 		diaChiKHCol.setCellValueFactory(new PropertyValueFactory<>("diaChi"));
 		sDTKHCol.setCellValueFactory(new PropertyValueFactory<>("soDT"));
-		KhachHangDAO qlkhdao = new KhachHangDAO();
 
-		dsQLKhachHang = qlkhdao.getDSKhachHang();
-		tableQLKhachHang.setItems(dsQLKhachHang);
-		tableQLKhachHang.setOnMouseClicked(e -> {
-			KhachHang selectKH = tableQLKhachHang.getSelectionModel().getSelectedItem();
-			txtsoCMNDQLKH.setText(selectKH.getSoCMND());
-			txtDiaChiQLKH.setText(selectKH.getDiaChi());
-			txtgioiTinhQLKH.setText(selectKH.getGioiTinh());
-			txthoQLKH.setText(selectKH.getHoKH());
-			txttenQLKH.setText(selectKH.getTenKH());
-			txtSoDTQLKH.setText(selectKH.getSoDT());
-
-			// ObservableList selectedCells = selectionModel.getSelectedCells();
-		});
 		// ===========XỬ LÝ BẢNG QLSP===========================
 //			String maMatHang;
 //		 String tenMatHang;
@@ -1628,17 +2965,25 @@ public class MHLVChinhController implements Initializable {
 //		 String image;
 //		ImageView imgVUnMask = new ImageView(imageUnMask);
 //		ImageView imgVMask = new ImageView(imageMask);
-		//btnUnMaskTTCN.setGraphic(imgVUnMask);
+		// btnUnMaskTTCN.setGraphic(imgVUnMask);
 		btnDoiMatKhauQLNV.setGraphic(new ImageView(new Image("img/lock.png")));
 		btnDangXuat.setGraphic(new ImageView(new Image("img/warning.png")));
 		btnLeft.setGraphic(new ImageView(new Image("img/left.png")));
 		btnRight.setGraphic(new ImageView(new Image("img/right.png")));
 		btnFirst.setGraphic(new ImageView(new Image("img/lastLeft.png")));
 		btnLast.setGraphic(new ImageView(new Image("img/lastRight.png")));
+		btnLeftQLHD.setGraphic(new ImageView(new Image("img/left.png")));
+		btnRightQLHD.setGraphic(new ImageView(new Image("img/right.png")));
+		btnFirstQLHD.setGraphic(new ImageView(new Image("img/lastLeft.png")));
+		btnLastQLHD.setGraphic(new ImageView(new Image("img/lastRight.png")));
 		btnLeftQLKH.setGraphic(new ImageView(new Image("img/left.png")));
 		btnRightQLKH.setGraphic(new ImageView(new Image("img/right.png")));
 		btnFirstQLKH.setGraphic(new ImageView(new Image("img/lastLeft.png")));
 		btnLastQLKH.setGraphic(new ImageView(new Image("img/lastRight.png")));
+		btnLeftQLNV.setGraphic(new ImageView(new Image("img/left.png")));
+		btnRightQLNV.setGraphic(new ImageView(new Image("img/right.png")));
+		btnFirstQLNV.setGraphic(new ImageView(new Image("img/lastLeft.png")));
+		btnLastQLNV.setGraphic(new ImageView(new Image("img/lastRight.png")));
 		// Chưa
 		int i = (matHangDAO.getDSMatHang_Loc(jcbLoaiXe1, jcbPhanKhoi1, jcbMauSac1, jcbGiaThanh1, jcbDongXe1,
 				txtSearchQLSP, dsQLSP, tableQLSP, 0, 15));
@@ -1752,8 +3097,13 @@ public class MHLVChinhController implements Initializable {
 			XuLyQuanLyNhanVien(nv);
 		});
 		btnChucNang3.setOnAction(e -> {
-			About.setVisible(true);
-			About.toFront();
+			ThongKePane.toFront();
+			ThongKeDoanhThuPane.toFront();
+			XuLyThongKeDoanhThu_Backgr();
+			tree_TK.setExpanded(true);
+			tree.getSelectionModel().select(TK_DoanhThu);
+			count = 0;
+			explTK = 1;
 		});
 		btnNoAbout.setOnAction(e -> {
 			About.setVisible(false);
@@ -1761,26 +3111,30 @@ public class MHLVChinhController implements Initializable {
 
 		});
 		btnChucNang2.setOnAction(e -> {
-			ThongKePane.toFront();
+			tree.getSelectionModel().select(HD_taoHD);
+			XuLyLapHoaDon();
+			themHoaDon.toFront();
 			count = 0;
+			explHD = 1;
+		});
+		btnChucNang4.setOnAction(e -> {
+			MoHDSD();
 		});
 		// btn giỏ hàng - thêm sp
 		btnTimKiem.setOnAction(Event -> {
-			lblTrangThaiThemSP.setText("");
-			paneSanPham.getChildren().clear();
 
-			Map<String, String[]> map = new HashMap<>();
-			map = matHangDAO.getImageData(jcbLoaiXe, jcbPhanKhoi, jcbMauSac, jcbGiaThanh, jcbDongXe, txtSearch);
-			for (String key : map.keySet()) {
-//				System.out.println("key : " + key);
-//				System.out.println("value : " + map.get(key)[0]);
-				AddSP(key, map.get(key)[0], map.get(key)[1]);
+			XuLybtnTimKiemGioHang();
+
+		});
+		txtSearch.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.ENTER)) {
+
+				XuLybtnTimKiemGioHang();
 			}
-			if (map.size() == 0)
-				lblTrangThaiThemSP.setText("*Không tìm thấy sản phẩm nào!");
 
 		});
 		btnTaoHoaDon.setOnAction(Event -> {
+			tree.getSelectionModel().select(HD_taoHD);
 			XuLyLapHoaDon();
 			themHoaDon.toFront();
 			count = 0;
@@ -1795,23 +3149,56 @@ public class MHLVChinhController implements Initializable {
 		btnXoaGioHang.setOnAction(e -> {
 			dsGioHang.clear();
 			tableGioHang.refresh();
+			price = 0.0;
+			thanhtienGioHang = 0.0;
+			for (CTHD cthd : dsGioHang) {
+				thanhtienGioHang += cthd.getThanhTien();
+				MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
+				Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
+				price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
+
+			}
+			// CTHD hd = c.getTableView().getItems().get(this.getIndex());
+
+			txtTongTienThemHD.setText(formatter.format(price));
+			//
+			lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+			tableGioHang.refresh();
+			tableLapHoaDon.refresh();
+
 		});
 		btnXoaSPGioHang.setOnAction(e -> {
 			int index = tableGioHang.getSelectionModel().getSelectedIndex();
 			dsGioHang.remove(index);
 			tableGioHang.refresh();
+			price = 0.0;
+			thanhtienGioHang = 0.0;
+			for (CTHD cthd : dsGioHang) {
+				thanhtienGioHang += cthd.getThanhTien();
+				MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
+				Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
+				price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
+
+			}
+
+			txtTongTienThemHD.setText(formatter.format(price));
+			//
+			lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+			tableGioHang.refresh();
+			tableLapHoaDon.refresh();
 
 		});
 
 		// ==============TẠO HOÁ ĐƠN===========================
 		btnGioHangHD.setOnAction(e -> {
-
+			tree.getSelectionModel().select(HD_TaoGioHang);
 			timKiem_them_matHang.toFront();
 			count = 0;
 			// jlistView.getSelectionModel().select(0);
 		});
 
 		btnTTKH.setOnAction(e -> {
+			tree.getSelectionModel().select(tree_QLKH);
 			QLKhachHangPane.toFront();
 			count = 0;
 			// jlistView.getSelectionModel().select(2);
@@ -1822,20 +3209,43 @@ public class MHLVChinhController implements Initializable {
 		// ===========BẮT SỰ KIỆN BUTON===QUẢN LÝ KHÁCH
 		// HÀNG============================================
 		btnThemKHVaoHD.setOnAction(e -> {
+
 			KhachHang selectKH = tableQLKhachHang.getSelectionModel().getSelectedItem();
-//			if (selectKH == null) {
-//				// thông báo chưa chọn
-//			} else {
-			// XuLyLapHoaDon();
-			// themHoaDon.toFront();
-			XuLyLapHoaDon();
-			themHoaDon.toFront();
-			count = 0;
-			// vboxListView.getS
-			// jlistView.getSelectionModel().select(1);
-			txtCMNDKHLHD.setText(selectKH.getSoCMND());
-			txtHoKHLHD.setText(selectKH.getHoKH());
-			txtTenKHLHD.setText(selectKH.getTenKH());
+			if (selectKH == null) {
+				dialog.setVisible(true);
+				dialogThongBao.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.toFront();
+				lblDialogTitle.setText("Không khách hàng nào được chọn!");
+				lblDialogContent.setText("Lưu ý: Bạn không thể lập hoá đơn khi chưa chọn khách hàng.");
+				btnYes.setVisible(false);
+				btnNo.setText("Thoát");
+				btnNo.setOnAction(q -> {
+					btnYes.setVisible(true);
+					dialog.setVisible(false);
+					dialogThongBao.setVisible(false);
+					dialog.toBack();
+					dialogThongBao.toBack();
+				});
+			} else {
+				txtCMNDKHLHD.setText(selectKH.getSoCMND());
+				txtHoKHLHD.setText(selectKH.getHoKH());
+				txtTenKHLHD.setText(selectKH.getTenKH());
+				tree.getSelectionModel().select(HD_taoHD);
+
+//				if (selectKH == null) {
+//					// thông báo chưa chọn
+//				} else {
+				// XuLyLapHoaDon();
+				// themHoaDon.toFront();
+				XuLyLapHoaDon();
+				themHoaDon.toFront();
+				count = 0;
+				// vboxListView.getS
+				// jlistView.getSelectionModel().select(1);
+
+			}
+
 //			}
 
 		});
@@ -1853,17 +3263,17 @@ public class MHLVChinhController implements Initializable {
 			}
 
 		});
-		txtMatKhau.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					nv = DangNhap();
-				}
-
-			}
-
-		});
+//		txtMatKhau.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//
+//			@Override
+//			public void handle(KeyEvent ke) {
+//				if (ke.getCode().equals(KeyCode.ENTER)) {
+//					nv = DangNhap();
+//				}
+//
+//			}
+//
+//		});
 		// jcbGiaThanh1.setOnMouseEntered(e ->{});
 		btnXoaQLSP.setOnAction(e -> {
 			XuLyXoaSQLSP();
@@ -1875,9 +3285,9 @@ public class MHLVChinhController implements Initializable {
 		btnThemQLSP.setOnAction(e -> {
 			XuLyThemQLSP();
 		});
-		btnHoanTacQLSP.setOnAction(e -> {
-			XuLybtnTimKiemQLSP();
-		});
+//		btnHoanTacQLSP.setOnAction(e -> {
+//			XuLybtnTimKiemQLSP();
+//		});
 		btnXoaTrangQLSP.setOnAction(e -> {
 			lblBinhXangMatHangQLSP.setText("");
 			lblDauMayMatHangQLSP.setText("");
@@ -1934,6 +3344,292 @@ public class MHLVChinhController implements Initializable {
 		});
 	}
 
+	private void MoHDSD() {
+		try {
+			String path = "./HuongDan.chm";
+			System.out.println(path);
+			File file = new File(path);
+
+			if (file.exists()) {
+				Runtime.getRuntime().exec("rundll32 url.dll, FileProtocolHandler " + "HuongDan.chm");
+			} else {
+				throw new Exception("File \"Help.chm\" not found!");
+			}
+		} catch (Exception ex) {
+			// OptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Notice",
+			// JOptionPane.OK_OPTION);
+			ex.printStackTrace();
+		}
+	}
+
+	private void XuLyBtnUnMasKLogin() {
+
+		if (matKhauDangNhap.equals("đang ẩn")) {
+			txtunHidePassLogin.setText(txtMatKhau.getText());
+			txtunHidePassLogin.setVisible(true);
+			txtunHidePassLogin.toFront();
+			// txtunHidePassLogin.requestFocus();
+			txtMatKhau.setVisible(false);
+			matKhauDangNhap = "đang hiện";
+			btnHideunPassLogin.setGraphic(new ImageView(new Image("img/mask.png")));
+		} else {
+			txtMatKhau.setText(txtunHidePassLogin.getText());
+			txtMatKhau.setVisible(true);
+			// txtMatKhau.requestFocus();
+			txtMatKhau.toFront();
+			txtunHidePassLogin.setVisible(false);
+			btnHideunPassLogin.setGraphic(new ImageView(new Image("img/unmask.png")));
+
+			matKhauDangNhap = "đang ẩn";
+		}
+		txtunHidePassLogin.setOnKeyPressed(e -> {
+			if (matKhauDangNhap.equals("đang ẩn") == false) {
+
+				txtMatKhau.setText(txtunHidePassLogin.getText());
+				if (e.getCode().equals(KeyCode.ENTER)) {
+					nv = DangNhap();
+				}
+
+			}
+
+		});
+		txtMatKhau.setOnKeyPressed(e -> {
+			if (matKhauDangNhap.equals("đang hiện") == false) {
+
+				txtunHidePassLogin.setText(txtMatKhau.getText());
+				if (e.getCode().equals(KeyCode.ENTER)) {
+					nv = DangNhap();
+				}
+
+			}
+		});
+
+	}
+
+	private void XuLyTableGioHang() {
+		maGioHang.setCellValueFactory(new PropertyValueFactory<>("maMatHang"));
+		soLuongGioHang.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
+		soLuongGioHang.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+		soLuongGioHang.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<CTHD, Integer>>() {
+
+			@Override
+			public void handle(CellEditEvent<CTHD, Integer> e) {
+
+				TablePosition<CTHD, Integer> pos = e.getTablePosition();
+
+				Integer newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				CTHD mh = e.getTableView().getItems().get(row);
+				MatHangDAO matHangDAO = new MatHangDAO();
+				MatHang chekmh = matHangDAO.getMatHangg(mh.getMaMatHang());
+				if (chekmh.getSoLuong() >= newValue) {
+					mh.setSoLuong(newValue);
+					mh.getThanhTien();
+
+					price = 0.0;
+					thanhtienGioHang = 0.0;
+					for (CTHD cthd : dsGioHang) {
+						thanhtienGioHang += cthd.getThanhTien();
+						MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
+						Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
+						price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
+
+					}
+					// CTHD hd = c.getTableView().getItems().get(this.getIndex());
+
+					txtTongTienThemHD.setText(formatter.format(price));
+					//
+					lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+					tableGioHang.refresh();
+					tableLapHoaDon.refresh();
+
+				} else {
+
+					dialog.toFront();
+					dialogThongBao.setVisible(true);
+					dialogThongBao.toFront();
+					dialog.setVisible(true);
+					lblDialogTitle.setText("SỐ LƯỢNG VƯỢT QUÁ QUY ĐỊNH! ");
+					lblDialogContent.setText(
+							"Số lượng không vượt quá: " + chekmh.getSoLuong() + " \n Bạn có muốn nhập lại không?");
+					btnNo.setDisable(true);
+					btnYes.setOnAction(e2 -> {
+
+						dialog.setVisible(false);
+						dialogThongBao.setVisible(false);
+						tableGioHang.refresh();
+						btnNo.setDisable(false);
+						thanhtienGioHang = 0.0;
+
+						lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+
+						price = 0.0;
+						thanhtienGioHang = 0.0;
+						for (CTHD cthd : dsGioHang) {
+							thanhtienGioHang += cthd.getThanhTien();
+							MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
+							Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
+							price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
+
+						}
+						// CTHD hd = c.getTableView().getItems().get(this.getIndex());
+
+						txtTongTienThemHD.setText(formatter.format(price));
+						//
+						lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+						tableGioHang.refresh();
+						tableLapHoaDon.refresh();
+						//
+
+					});
+				}
+			}
+		});
+		// soLuongGioHang.setCellFactory(TextFieldTableCell.<CTHD>forTableColumn());
+		donGiaGioHang.setCellValueFactory(new PropertyValueFactory<>("donGia"));
+		thanhTienGioHang.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
+		giamGiaGioHang.setCellValueFactory(new PropertyValueFactory<>("giamGia"));
+		giamGiaGioHang.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		giamGiaGioHang.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<CTHD, Double>>() {
+
+			@Override
+			public void handle(CellEditEvent<CTHD, Double> e) {
+
+				TablePosition<CTHD, Double> pos = e.getTablePosition();
+
+				Double newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				CTHD mh = e.getTableView().getItems().get(row);
+				// MatHang chekmh = matHangDAO.getMatHangg(mh.getMaMatHang());
+				if (newValue >= 0)
+					mh.setGiamGia(newValue);
+				mh.getThanhTien();
+				thanhtienGioHang = 0.0;
+
+				// lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+
+				price = 0.0;
+				thanhtienGioHang = 0.0;
+				for (CTHD cthd : dsGioHang) {
+					thanhtienGioHang += cthd.getThanhTien();
+					MatHangDAO matHangDAO = new MatHangDAO();
+					MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
+					Double tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
+					price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
+
+				}
+				System.out.println(price);
+				txtTongTienThemHD.setText(formatter.format(price));
+
+				lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+				tableGioHang.refresh();
+				tableLapHoaDon.refresh();
+
+			}
+		});
+
+		donGiaGioHang.setCellFactory(c -> {
+			return new TableCell<CTHD, Double>() {
+				@Override
+				protected void updateItem(Double price, boolean empty) {
+					super.updateItem(price, empty);
+					if (empty) {
+						setText(null);
+					} else {
+						setText(formatter.format(price));
+					}
+				}
+			};
+		});
+		// thanhTienGioHang1.setCellValueFactory(new
+		// PropertyValueFactory<>("thanhTien"));
+		thanhTienGioHang.setCellFactory(c -> {
+			return new TableCell<CTHD, Double>() {
+				@Override
+				protected void updateItem(Double price, boolean empty) {
+					super.updateItem(price, empty);
+					if (empty) {
+						setText(null);
+					} else {
+						setText(formatter.format(price));
+					}
+				}
+			};
+		});
+		tableGioHang.setEditable(true);
+		tableGioHang.setItems(dsGioHang);
+		tableGioHang.setPlaceholder(new Label("Giỏ hàng trống!"));
+		tableGioHang.setOnMouseClicked(e -> {
+
+		});
+
+	}
+
+	private boolean RegexBtnLuuTTCN() {
+		String hoNV = txtHoNVTT.getText().trim();
+		String tenNV = txtTenNVTT.getText().trim();
+		String diaChiNV = txtDiaChiNVTT.getText().trim();
+		if (!(hoNV.length() > 0 && hoNV.matches(
+				"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z ]*"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Họ và tên đệm không đúng!");
+			lblDialogContent.setText("Họ đệm không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txtHoNVTT);
+			return false;
+		}
+
+		if (!(tenNV.length() > 0 && tenNV.matches("^[\\p{L} .'-]+$"))) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Tên không đúng!");
+			lblDialogContent.setText("tên không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txtTenNVTT);
+			return false;
+		}
+		if (!(diaChiNV.length() > 0 && diaChiNV.matches(
+				"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z0-9,/ ]*"))) {
+			// địa chỉ có kiểu X/Y/Z tên đường, tên phường, tên quận, tên thành phố : 65/3
+			// Phạm Văn Bach, Phường 12, Quận Tân Bình, tp Hồ Chính Minh
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Địa chỉ không đúng!");
+			lblDialogContent.setText("Địa chỉ không được để trống và Chỉ chứa chữ!");
+
+			XuLyBtnNoRegex(txtDiaChiNVTT);
+			return false;
+		}
+
+		return true;
+	}
+
+	@FXML
+	private void XuLybtnTimKiemGioHang() {
+		lblTrangThaiThemSP.setText("");
+		paneSanPham.getChildren().clear();
+
+		Map<String, String[]> map = new HashMap<>();
+		MatHangDAO matHangDAO = new MatHangDAO();
+		// map = matHangDAO.getImageData(jcbLoaiXe, jcbPhanKhoi, jcbMauSac, jcbGiaThanh,
+		// jcbDongXe, txtSearch);
+		map = matHangDAO.getImageData(jcbLoaiXe, jcbPhanKhoi, jcbMauSac, jcbDongXe, jcbGiaThanh, txtSearch);
+		for (String key : map.keySet()) {
+//			System.out.println("key : " + key);
+//			System.out.println("value : " + map.get(key)[0]);
+			AddSP(key, map.get(key)[0], map.get(key)[1]);
+		}
+		if (map.size() == 0)
+			lblTrangThaiThemSP.setText("*Không tìm thấy sản phẩm nào!");
+
+	}
+
 	private void XuLyQuanLyNhanVien(NhanVien nv) {
 //		ImageView imgVUnMask = new ImageView(imageUnMask);
 //		ImageView imgVMask = new ImageView(imageMask);
@@ -1943,28 +3639,62 @@ public class MHLVChinhController implements Initializable {
 
 		});
 		btnLuu.setOnAction(e -> {
+			// Đang03
+			System.out.println("Đã bấm");
+			if (RegexBtnLuuTTCN() == true) {
+				nv.setTenNV(txtTenNVTT.getText().trim());
+				nv.setHoNV(txtHoNVTT.getText().trim());
+				nv.setDiaChi(txtDiaChiNVTT.getText().trim());
+				nv.setGioiTinh(cbbGioiTinhNVTT.getValue());
+				System.out.println(cbbGioiTinhNVTT.getValue().toString());
+				System.out.println(nv.getGioiTinh());
+				NhanVienDAO nvDao = new NhanVienDAO();
+				nvDao.CapNhat_NhanVien(nv);
+			} else {
+
+			}
+
+		});
+		btnHoanTac.setOnAction(e -> {
+			txtMaNVTT.setText(nv.getMaNV().toString());
+
+			txtHoNVTT.setText(nv.getHoNV());
+
+			txtTenNVTT.setText(nv.getTenNV());
+
+			txtChucVuNVTT.setText(nv.getChucVu());
+
+			txtLuongNVTT.setText(formatter.format(nv.getLuong()));
+
+			txtCaLamNVTT.setText(nv.getCaLam());
+
+			txtNgayVaoLamNVTT.setText(nv.getNgayLam().toString());
+
+			txtDiaChiNVTT.setText(nv.getDiaChi());
+			NhanVienDAO nhanVienDao = new NhanVienDAO();
+			dsGioiTinhNVTT = nhanVienDao.getDSGioiTinh();
+			cbbGioiTinhNVTT.setItems(dsGioiTinhNVTT);
+			cbbGioiTinhNVTT.requestFocus();
+			cbbGioiTinhNVTT.setValue(nv.getGioiTinh());
+			txthideMatKhauNVTT.setText(nv.getMatKhau());
+
+			// txtMatKhauNVTT.setText(nv.getMatKhau());
+			txtsoCMNDNVTT.setText(nv.getSoCMND());
 
 		});
 
 	}
 
 	private void XuLydialogDoiMatKhau(NhanVien nv) {
-		ImageView imgVUnMaskC = new ImageView(imageUnMask);
-		ImageView imgVMaskC = new ImageView(imageMask);
-		ImageView imgVUnMaskM = new ImageView(imageUnMask);
-		ImageView imgVMaskM = new ImageView(imageMask);
-		ImageView imgVUnMaskXN = new ImageView(imageUnMask);
-		ImageView imgVMaskXN = new ImageView(imageMask);
-		btnMaskMatKhauCu.setGraphic(imgVUnMaskC);
-		btnMaskMatKhauMoi.setGraphic(imgVUnMaskM);
-		btnMaskMatKhauXacNhan.setGraphic(imgVUnMaskXN);
+
+		txtTrangThaiDoiMK.setText("");
 		dialog.setVisible(true);
 		dialog.toFront();
 		dialogDoiMatKhau.setVisible(true);
 		dialogDoiMatKhau.toFront();
-		passwordC = "đang ẩn";
-		passwordM = "đang ẩn";
-		passwordXN = "đang ẩn";
+		btnMaskMatKhauCu.setGraphic(new ImageView(new Image("img/unmask.png")));
+		btnMaskMatKhauMoi.setGraphic(new ImageView(new Image("img/unmask.png")));
+		btnMaskMatKhauXacNhan.setGraphic(new ImageView(new Image("img/unmask.png")));
 
 		txtMatKhauCu.setText("");
 		txtMatKhauMoi.setText("");
@@ -1978,77 +3708,126 @@ public class MHLVChinhController implements Initializable {
 		txtMatKhauXacNhan.setVisible(true);
 
 		txtMatKhauCutxt.setVisible(false);
-		
+
 		txtMatKhauMoitxt.setVisible(false);
 		txtMatKhauXacNhantxt.setVisible(false);
-		
+		System.out.println(passwordC);
+		passwordC = "đang ẩn";
+		passwordM = "đang ẩn";
+		passwordXN = "đang ẩn";
+		btnMaskMatKhauCu.setOnAction(e -> {
 
-		btnMaskMatKhauCu.addEventFilter(MouseEvent.MOUSE_CLICKED, ex2 -> {
-			if (passwordC.equals("") == false) {
-				
+			if (passwordC.equals("đang ẩn")) {
+				System.out.println("đã vào");
 				txtMatKhauCutxt.setText(txtMatKhauCu.getText());
-				txtMatKhauCu.clear();
-				txtMatKhauCutxt.toFront();
 				txtMatKhauCutxt.setVisible(true);
+				txtMatKhauCutxt.toFront();
+				// txtunHidePassLogin.requestFocus();
 				txtMatKhauCu.setVisible(false);
-				btnMaskMatKhauCu.setGraphic(imgVMaskC);
-				passwordC = "";
-				// Đang
-
+				passwordC = "đang hiện";
+				btnMaskMatKhauCu.setGraphic(new ImageView(new Image("img/mask.png")));
 			} else {
 				txtMatKhauCu.setText(txtMatKhauCutxt.getText());
-				txtMatKhauCutxt.clear();
+				txtMatKhauCu.setVisible(true);
+				// txtMatKhau.requestFocus();
 				txtMatKhauCu.toFront();
 				txtMatKhauCutxt.setVisible(false);
-				txtMatKhauCu.setVisible(true);
+				btnMaskMatKhauCu.setGraphic(new ImageView(new Image("img/unmask.png")));
+
 				passwordC = "đang ẩn";
-				btnMaskMatKhauCu.setGraphic(imgVUnMaskC);
 			}
+			txtMatKhauCutxt.setOnKeyPressed(e2 -> {
+				if (passwordC.equals("đang ẩn") == false) {
+
+					txtMatKhauCu.setText(txtMatKhauCutxt.getText());
+
+				}
+
+			});
+			txtMatKhau.setOnKeyPressed(e2 -> {
+				if (passwordC.equals("đang hiện") == false) {
+
+					txtMatKhauCutxt.setText(txtMatKhauCu.getText());
+
+				}
+			});
 
 		});
-		btnMaskMatKhauMoi.addEventFilter(MouseEvent.MOUSE_CLICKED, ex2 -> {
-			if (passwordM.equals("") == false) {
-				txtMatKhauMoitxt.setText(txtMatKhauMoi.getText());
-				txtMatKhauMoi.clear();
-				txtMatKhauMoitxt.toFront();
-				txtMatKhauMoitxt.setVisible(true);
-				txtMatKhauMoi.setVisible(false);
-				btnMaskMatKhauMoi.setGraphic(imgVMaskM);
-				passwordM = "";
-				// Đang
+		btnMaskMatKhauMoi.setOnAction(e -> {
 
+			if (passwordM.equals("đang ẩn")) {
+				System.out.println("đã vào");
+				txtMatKhauMoitxt.setText(txtMatKhauMoi.getText());
+				txtMatKhauMoitxt.setVisible(true);
+				txtMatKhauMoitxt.toFront();
+				// txtunHidePassLogin.requestFocus();
+				txtMatKhauMoi.setVisible(false);
+				passwordM = "đang hiện";
+				btnMaskMatKhauMoi.setGraphic(new ImageView(new Image("img/mask.png")));
 			} else {
 				txtMatKhauMoi.setText(txtMatKhauMoitxt.getText());
-				txtMatKhauMoitxt.clear();
+				txtMatKhauMoi.setVisible(true);
+				// txtMatKhau.requestFocus();
 				txtMatKhauMoi.toFront();
 				txtMatKhauMoitxt.setVisible(false);
-				txtMatKhauMoi.setVisible(true);
+				btnMaskMatKhauMoi.setGraphic(new ImageView(new Image("img/unmask.png")));
+
 				passwordM = "đang ẩn";
-				btnMaskMatKhauMoi.setGraphic(imgVUnMaskM);
 			}
+			txtMatKhauMoitxt.setOnKeyPressed(e2 -> {
+				if (passwordM.equals("đang ẩn") == false) {
+
+					txtMatKhauMoi.setText(txtMatKhauMoitxt.getText());
+
+				}
+
+			});
+			txtMatKhau.setOnKeyPressed(e2 -> {
+				if (passwordM.equals("đang hiện") == false) {
+
+					txtMatKhauMoitxt.setText(txtMatKhauMoi.getText());
+
+				}
+			});
 
 		});
-		btnMaskMatKhauXacNhan.addEventFilter(MouseEvent.MOUSE_CLICKED, ex2 -> {
-			if (passwordXN.equals("") == false) {
-				txtMatKhauXacNhantxt.setText(txtMatKhauXacNhan.getText());
-				txtMatKhauXacNhan.clear();
-				txtMatKhauXacNhantxt.toFront();
-				txtMatKhauXacNhantxt.setVisible(true);
-				txtMatKhauXacNhan.setVisible(false);
-				btnMaskMatKhauXacNhan.setGraphic(imgVMaskXN);
-				passwordXN = "";
-				// Đang
 
+		btnMaskMatKhauXacNhan.setOnAction(e -> {
+
+			if (passwordXN.equals("đang ẩn")) {
+				System.out.println("đã vào");
+				txtMatKhauXacNhantxt.setText(txtMatKhauXacNhan.getText());
+				txtMatKhauXacNhantxt.setVisible(true);
+				txtMatKhauXacNhantxt.toFront();
+				// txtunHidePassLogin.requestFocus();
+				txtMatKhauXacNhan.setVisible(false);
+				passwordXN = "đang hiện";
+				btnMaskMatKhauXacNhan.setGraphic(new ImageView(new Image("img/mask.png")));
 			} else {
 				txtMatKhauXacNhan.setText(txtMatKhauXacNhantxt.getText());
-				txtMatKhauXacNhantxt.clear();
+				txtMatKhauXacNhan.setVisible(true);
+				// txtMatKhau.requestFocus();
 				txtMatKhauXacNhan.toFront();
 				txtMatKhauXacNhantxt.setVisible(false);
-				txtMatKhauXacNhan.setVisible(true);
+				btnMaskMatKhauXacNhan.setGraphic(new ImageView(new Image("img/unmask.png")));
 
 				passwordXN = "đang ẩn";
-				btnMaskMatKhauXacNhan.setGraphic(imgVUnMaskXN);
 			}
+			txtMatKhauXacNhantxt.setOnKeyPressed(e2 -> {
+				if (passwordXN.equals("đang ẩn") == false) {
+
+					txtMatKhauXacNhan.setText(txtMatKhauXacNhantxt.getText());
+
+				}
+
+			});
+			txtMatKhau.setOnKeyPressed(e2 -> {
+				if (passwordXN.equals("đang hiện") == false) {
+
+					txtMatKhauXacNhantxt.setText(txtMatKhauXacNhan.getText());
+
+				}
+			});
 
 		});
 
@@ -2071,18 +3850,12 @@ public class MHLVChinhController implements Initializable {
 		String matKhauCu = "";
 		String matKhauMoi = "";
 		String matKhauXN = "";
-		if (passwordC.equals("") == true)
-			matKhauCu = txtMatKhauCutxt.getText();
-		else
-			matKhauCu = txtMatKhauCu.getText();
-		if (passwordM.equals("") == true)
-			matKhauMoi = txtMatKhauMoitxt.getText();
-		else
-			matKhauMoi = txtMatKhauMoi.getText();
-		if (passwordXN.equals("") == true)
-			matKhauXN = txtMatKhauXacNhantxt.getText();
-		else
-			matKhauXN = txtMatKhauXacNhan.getText();
+
+		matKhauCu = txtMatKhauCu.getText();
+
+		matKhauMoi = txtMatKhauMoi.getText();
+
+		matKhauXN = txtMatKhauXacNhan.getText();
 
 //		System.out.println(passwordC + "-" + passwordM + "-" + passwordXN);
 //		System.out.println(matKhauCu + "-" + matKhauMoi + "-" + matKhauXN);
@@ -2095,7 +3868,7 @@ public class MHLVChinhController implements Initializable {
 					nvDao.CapNhat_MatKhau(nv2);
 					txtTrangThaiDoiMK.setText("ĐỔI MẬT KHẨU THÀNH CÔNG!");
 					txthideMatKhauNVTT.setText(matKhauMoi);
-					
+
 					return true;
 				} else { // mật khẩu mới k trùng
 					txtTrangThaiDoiMK.setText("Mật khẩu mới và xác nhận mật khẩu không trùng khớp!");
@@ -2105,7 +3878,7 @@ public class MHLVChinhController implements Initializable {
 						txtMatKhauMoi.requestFocus();
 
 				}
-			} else {   // mật khẩu cũ k đúng
+			} else { // mật khẩu cũ k đúng
 				txtTrangThaiDoiMK.setText("Mật khẩu hiện tại không đúng. Vui lòng nhập lại.");
 				if (passwordC.equals("") == false)
 					txtMatKhauCutxt.requestFocus();
@@ -2487,6 +4260,44 @@ public class MHLVChinhController implements Initializable {
 			XuLyBtnNoRegex(lblMauXeQLSP);
 			return false;
 		}
+		if (lblDongCoMatHangQLSP.getText().trim().length() > 0) {
+			try {
+				Double x = Double.parseDouble(lblDongCoMatHangQLSP.getText().trim());
+				if (x <= 0) {
+					dialog.setVisible(true);
+					dialog.toFront();
+					dialogThongBao.setVisible(true);
+					lblDialogTitle.setText("Giá trị động cơ không đúng!");
+					lblDialogContent.setText("Giá trị động cơ phải là số thực và phải lớn hơn 0!");
+
+					XuLyBtnNoRegex(lblDongCoMatHangQLSP);
+
+					return false;
+				}
+			} catch (Exception e) {
+				dialog.setVisible(true);
+				dialog.toFront();
+				dialogThongBao.setVisible(true);
+				lblDialogTitle.setText("Giá trị động cơ không đúng!");
+				lblDialogContent.setText("Giá trị động cơ phải là số thực và phải lớn hơn 0.");
+
+				XuLyBtnNoRegex(lblDongCoMatHangQLSP);
+
+				return false;
+			}
+
+		} else if (lblDongCoMatHangQLSP.getText().trim().length() <= 0) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			lblDialogTitle.setText("Giá trị động cơ không được để trống!");
+			lblDialogContent.setText("Giá trị động cơ phải là số thực và phải lớn hơn 0.");
+
+			XuLyBtnNoRegex(lblDongCoMatHangQLSP);
+
+			return false;
+		}
+
 		if (!(lblKhungXeMatHangQLSP.getText().trim().length() > 0 && lblKhungXeMatHangQLSP.getText().trim().matches(
 				"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -]*"))) {
 			dialog.setVisible(true);
@@ -2611,6 +4422,9 @@ public class MHLVChinhController implements Initializable {
 			menuHelp.toBack();
 
 		});
+		btnHuongDanSD.setOnAction(e2 -> {
+			MoHDSD();
+		});
 		btnAbout.setOnAction(e2 -> { // Hiện about
 			About.setVisible(true);
 			About.toFront();
@@ -2621,9 +4435,9 @@ public class MHLVChinhController implements Initializable {
 
 		});
 		yamas.setOnMouseClicked(e2 -> {
-			menuHelp.setVisible(false);
 			menuHelp.toBack();
 			menuHelpMini.setVisible(false);
+			menuHelpMini.toBack();
 
 		});
 
@@ -2657,17 +4471,26 @@ public class MHLVChinhController implements Initializable {
 			}
 
 		});
-		txtMatKhau.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
-			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					nv = DangNhap();
-				}
-
-			}
-
-		});
+//		txtMatKhau.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//
+//			@Override
+//			public void handle(KeyEvent ke) {
+//				
+//
+//			}
+//
+//		});
+//		txtunHidePassLogin.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//			
+//			@Override
+//			public void handle(KeyEvent ke) {
+//				if (ke.getCode().equals(KeyCode.ENTER)) {
+//					nv = DangNhap();
+//				}
+//				
+//			}
+//			
+//		});
 
 	}
 
@@ -3020,15 +4843,500 @@ public class MHLVChinhController implements Initializable {
 			}
 
 		});
+		tableQLHD_HD.setOnKeyPressed(e -> {
+			HoaDon selectHD = tableQLHD_HD.getSelectionModel().getSelectedItem();
+			if (selectHD != null) {
+				CTHDDAO cthdDao = new CTHDDAO();
+				dsCTHD_QLHD = cthdDao.getDSGioGang_CTHD_MaHD(selectHD.getMaHoaDon());
+				tableQLHD_CTHD.setItems(dsCTHD_QLHD);
+				tableQLHD_CTHD.refresh();
+
+			}
+
+		});
+		XuLyActionTimKiemHoaDon();
 
 	}
 
 	private void XuLyActionTimKiemHoaDon() {
+		countQLHD = 0;
+		startQLHD = 0;
+		endQLHD = 15;
 		HoaDonDAO hdDao = new HoaDonDAO();
 		dsHoaDonQLHD.clear();
-		hdDao.getDSHoaDon(txtSoCMNDKHQLHD, txtHoKHQLHD, txtTenKHQLHD, txtSoDTKHQLHD, txtMANVQLHD, txtMAHDQLHD,
-				dpkFromQLHD, dpktoQLHD, tableQLHD_HD, dsHoaDonQLHD);
+		countQLHD = hdDao.getDSHoaDon(txtSoCMNDKHQLHD, txtHoKHQLHD, txtTenKHQLHD, txtSoDTKHQLHD, txtMANVQLHD,
+				txtMAHDQLHD, dpkFromQLHD, dpktoQLHD, tableQLHD_HD, dsHoaDonQLHD, startQLHD, endQLHD);
+		System.out.println(count);
+		// soLuongTrangQLHD = x/15 + 1;
 		tableQLHD_HD.refresh();
+		if (countQLHD % 15 == 0)
+			soLuongTrangQLHD = (countQLHD / 15);
+		else
+			soLuongTrangQLHD = (countQLHD / 15) + 1;
+		if (soLuongTrangQLHD == 1)
+			btnRightQLHD.setDisable(true);
+		if (countQLHD == 0)
+			tableQLHD_HD.setPlaceholder(new Label("Không có hoá đơn để hiển thị!"));
+
+		if (pageCountQLHD == soLuongTrangQLHD || soLuongTrangQLHD == 0) {
+			btnRightQLHD.setDisable(true);
+			btnLastQLHD.setDisable(true);
+		}
+
+		else {
+			btnRightQLHD.setDisable(false);
+			btnLastQLHD.setDisable(false);
+		}
+		if (pageCountQLHD == 1) {
+			btnLeftQLHD.setDisable(true);
+			btnFirstQLHD.setDisable(true);
+
+		}
+
+		else {
+			btnLeftQLHD.setDisable(false);
+			btnFirstQLHD.setDisable(false);
+
+		}
+
+		// paneQLHD.toFront();
+		startQLHD = 0;
+		endQLHD = 15;
+		pageCountQLHD = 1;
+
+		if (countQLHD % 15 == 0)
+			soLuongTrangQLHD = (countQLHD / 15);
+		else
+			soLuongTrangQLHD = (countQLHD / 15) + 1;
+		if (soLuongTrangQLHD == 1)
+			btnRightQLHD.setDisable(true);
+		if (countQLHD == 0)
+			tableQLHD_HD.setPlaceholder(new Label("Không có sản phẩm để hiển thị!")); // Khi bảng trống
+		// -===================
+		pageCountQLHD = 1;
+		if (pageCountQLHD == soLuongTrangQLHD || soLuongTrangQLHD == 0) {
+			btnRightQLHD.setDisable(true);
+			btnLastQLHD.setDisable(true);
+		}
+
+		else {
+			btnRightQLHD.setDisable(false);
+			btnLastQLHD.setDisable(false);
+		}
+		if (pageCountQLHD == 1) {
+			btnLeftQLHD.setDisable(true);
+			btnFirstQLHD.setDisable(true);
+
+		}
+
+		else {
+			btnLeftQLHD.setDisable(false);
+			btnFirstQLHD.setDisable(false);
+
+		}
+		// lblTenSP.setText("Đã chuyển tên SP");
+		// System.out.println(count);
+		lblTrangHienTaiQLHD.setText(pageCountQLHD + "/" + soLuongTrangQLHD);
+//		btnSearchQLSP.setOnAction(e2 -> {
+//			XuLybtnTimKiemQLSP();
+//
+//		});
+//		txtSearchQLSP.setOnKeyPressed(e -> {
+//			XuLybtnTimKiemQLSP();
+//		});
+		btnRightQLHD.setOnAction(e1 -> {
+
+			pageCountQLHD = pageCountQLHD + 1;
+			if (pageCountQLHD == soLuongTrangQLHD || soLuongTrangQLHD == 0) {
+				btnRightQLHD.setDisable(true);
+				btnLastQLHD.setDisable(true);
+			}
+
+			else {
+				btnRightQLHD.setDisable(false);
+				btnLastQLHD.setDisable(false);
+			}
+			if (pageCountQLHD == 1) {
+				btnLeftQLHD.setDisable(true);
+				btnFirstQLHD.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLHD.setDisable(false);
+				btnFirstQLHD.setDisable(false);
+
+			}
+			startQLHD += 15;
+			endQLHD += 15;
+			// System.out.println(startQLHD + " " + endQLHD);
+//			int count = dsHoaDonQLHD.size();
+			// if(count<)
+			if (countQLHD > startQLHD) {
+				if (countQLHD >= endQLHD)
+					tableQLHD_HD.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, endQLHD)));
+				else
+					tableQLHD_HD
+							.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, countQLHD)));
+				tableQLHD_HD.refresh();
+				lblTrangHienTaiQLHD.setText(pageCountQLHD + "/" + soLuongTrangQLHD);
+			}
+		});
+		btnLeftQLHD.setOnAction(e3 -> {
+
+			pageCountQLHD = pageCountQLHD - 1;
+			if (pageCountQLHD == soLuongTrangQLHD || soLuongTrangQLHD == 0) {
+				btnRightQLHD.setDisable(true);
+				btnLastQLHD.setDisable(true);
+			}
+
+			else {
+				btnRightQLHD.setDisable(false);
+				btnLastQLHD.setDisable(false);
+			}
+			if (pageCountQLHD == 1) {
+				btnLeftQLHD.setDisable(true);
+				btnFirstQLHD.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLHD.setDisable(false);
+				btnFirstQLHD.setDisable(false);
+
+			}
+			startQLHD -= 15;
+			endQLHD -= 15;
+
+			if (countQLHD > startQLHD) {
+				if (countQLHD >= endQLHD)
+					tableQLHD_HD.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, endQLHD)));
+				else
+					tableQLHD_HD
+							.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, countQLHD)));
+				tableQLHD_HD.refresh();
+				lblTrangHienTaiQLHD.setText(pageCountQLHD + "/" + soLuongTrangQLHD);
+			}
+		});
+
+		btnFirstQLHD.setOnAction(e -> {
+
+			pageCountQLHD = 1;
+			if (pageCountQLHD == soLuongTrangQLHD || soLuongTrangQLHD == 0) {
+				btnRightQLHD.setDisable(true);
+				btnLastQLHD.setDisable(true);
+			}
+
+			else {
+				btnRightQLHD.setDisable(false);
+				btnLastQLHD.setDisable(false);
+			}
+			if (pageCountQLHD == 1) {
+				btnLeftQLHD.setDisable(true);
+				btnFirstQLHD.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLHD.setDisable(false);
+				btnFirstQLHD.setDisable(false);
+
+			}
+			startQLHD = 0;
+			endQLHD = 15;
+
+			if (countQLHD > startQLHD) {
+				if (countQLHD >= endQLHD)
+					tableQLHD_HD.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, endQLHD)));
+				else
+					tableQLHD_HD
+							.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, countQLHD)));
+				tableQLHD_HD.refresh();
+				lblTrangHienTaiQLHD.setText(pageCountQLHD + "/" + soLuongTrangQLHD);
+			}
+
+		});
+		btnLastQLHD.setOnAction(e -> {
+
+			pageCountQLHD = soLuongTrangQLHD;
+			if (pageCountQLHD == soLuongTrangQLHD || soLuongTrangQLHD == 0) {
+				btnRightQLHD.setDisable(true);
+				btnLastQLHD.setDisable(true);
+			}
+
+			else {
+				btnRightQLHD.setDisable(false);
+				btnLastQLHD.setDisable(false);
+			}
+			if (pageCountQLHD == 1) {
+				btnLeftQLHD.setDisable(true);
+				btnFirstQLHD.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLHD.setDisable(false);
+				btnFirstQLHD.setDisable(false);
+
+			}
+			startQLHD = (soLuongTrangQLHD - 1) * 15;
+			endQLHD = (soLuongTrangQLHD - 1) * 15 + 15;
+			// System.out.println(startQLHD + " " + endQLHD);
+			if (countQLHD > startQLHD) {
+				if (countQLHD >= endQLHD)
+					tableQLHD_HD.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, endQLHD)));
+				else
+					tableQLHD_HD
+							.setItems(FXCollections.observableArrayList(dsHoaDonQLHD.subList(startQLHD, countQLHD)));
+				tableQLHD_HD.refresh();
+
+			}
+			lblTrangHienTaiQLHD.setText(pageCountQLHD + "/" + soLuongTrangQLHD);
+		});
+
+	}
+
+	@FXML
+	private void XuLyActionTimKiemKhachHang() {
+		countQLKH = 0;
+		startQLKH = 0;
+		endQLKH = 15;
+		KhachHangDAO khDao = new KhachHangDAO();
+		dsQLKhachHang.clear();
+		countQLKH = khDao.getDSKhachHang_Loc(txtsoCMNDQLKH, txttenQLKH, txthoQLKH, txtgioiTinhQLKH, txtDiaChiQLKH,
+				txtSoDTQLKH, dsQLKhachHang, tableQLKhachHang, startQLKH, endQLKH);
+		System.out.println(count);
+		// soLuongTrangQLKH = x/15 + 1;
+		tableQLKhachHang.refresh();
+		if (countQLKH % 15 == 0)
+			soLuongTrangQLKH = (countQLKH / 15);
+		else
+			soLuongTrangQLKH = (countQLKH / 15) + 1;
+		if (soLuongTrangQLKH == 1)
+			btnRightQLKH.setDisable(true);
+		if (countQLKH == 0)
+			tableQLKhachHang.setPlaceholder(new Label("Không có sản phẩm để hiển thị!"));
+
+		if (pageCountQLKH == soLuongTrangQLKH || soLuongTrangQLKH == 0) {
+			btnRightQLKH.setDisable(true);
+			btnLastQLKH.setDisable(true);
+		}
+
+		else {
+			btnRightQLKH.setDisable(false);
+			btnLastQLKH.setDisable(false);
+		}
+		if (pageCountQLKH == 1) {
+			btnLeftQLKH.setDisable(true);
+			btnFirstQLKH.setDisable(true);
+
+		}
+
+		else {
+			btnLeftQLKH.setDisable(false);
+			btnFirstQLKH.setDisable(false);
+
+		}
+
+		// paneQLKH.toFront();
+		startQLKH = 0;
+		endQLKH = 15;
+		pageCountQLKH = 1;
+
+		if (countQLKH % 15 == 0)
+			soLuongTrangQLKH = (countQLKH / 15);
+		else
+			soLuongTrangQLKH = (countQLKH / 15) + 1;
+		if (soLuongTrangQLKH == 1)
+			btnRightQLKH.setDisable(true);
+		if (countQLKH == 0)
+			tableQLKhachHang.setPlaceholder(new Label("Không có sản phẩm để hiển thị!")); // Khi bảng trống
+		// -===================
+		pageCountQLKH = 1;
+		if (pageCountQLKH == soLuongTrangQLKH || soLuongTrangQLKH == 0) {
+			btnRightQLKH.setDisable(true);
+			btnLastQLKH.setDisable(true);
+		}
+
+		else {
+			btnRightQLKH.setDisable(false);
+			btnLastQLKH.setDisable(false);
+		}
+		if (pageCountQLKH == 1) {
+			btnLeftQLKH.setDisable(true);
+			btnFirstQLKH.setDisable(true);
+
+		}
+
+		else {
+			btnLeftQLKH.setDisable(false);
+			btnFirstQLKH.setDisable(false);
+
+		}
+		// lblTenSP.setText("Đã chuyển tên SP");
+		// System.out.println(count);
+		lblPageQLKH.setText(pageCountQLKH + "/" + soLuongTrangQLKH);
+//		btnSearchQLKH.setOnAction(e2 -> {
+//			XuLybtnTimKiemQLKH();
+//
+//		});
+//		txtSearchQLKH.setOnKeyPressed(e -> {
+//			XuLybtnTimKiemQLKH();
+//		});
+		btnRightQLKH.setOnAction(e1 -> {
+
+			pageCountQLKH = pageCountQLKH + 1;
+			System.out.println(pageCountQLKH);
+			if (pageCountQLKH == soLuongTrangQLKH || soLuongTrangQLKH == 0) {
+				btnRightQLKH.setDisable(true);
+				btnLastQLKH.setDisable(true);
+			}
+
+			else {
+				btnRightQLKH.setDisable(false);
+				btnLastQLKH.setDisable(false);
+			}
+			if (pageCountQLKH == 1) {
+				btnLeftQLKH.setDisable(true);
+				btnFirstQLKH.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLKH.setDisable(false);
+				btnFirstQLKH.setDisable(false);
+
+			}
+			startQLKH += 15;
+			endQLKH += 15;
+			// System.out.println(startQLKH + " " + endQLKH);
+//			int count = dsHoaDonQLKH.size();
+			// if(count<)
+			if (countQLKH > startQLKH) {
+				if (countQLKH >= endQLKH)
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, endQLKH)));
+				else
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, countQLKH)));
+				tableQLKhachHang.refresh();
+				lblPageQLKH.setText(pageCountQLKH + "/" + soLuongTrangQLKH);
+			}
+		});
+		btnLeftQLKH.setOnAction(e3 -> {
+
+			pageCountQLKH = pageCountQLKH - 1;
+			if (pageCountQLKH == soLuongTrangQLKH || soLuongTrangQLKH == 0) {
+				btnRightQLKH.setDisable(true);
+				btnLastQLKH.setDisable(true);
+			}
+
+			else {
+				btnRightQLKH.setDisable(false);
+				btnLastQLKH.setDisable(false);
+			}
+			if (pageCountQLKH == 1) {
+				btnLeftQLKH.setDisable(true);
+				btnFirstQLKH.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLKH.setDisable(false);
+				btnFirstQLKH.setDisable(false);
+
+			}
+			startQLKH -= 15;
+			endQLKH -= 15;
+
+			if (countQLKH > startQLKH) {
+				if (countQLKH >= endQLKH)
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, endQLKH)));
+				else
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, countQLKH)));
+				tableQLKhachHang.refresh();
+				lblPageQLKH.setText(pageCountQLKH + "/" + soLuongTrangQLKH);
+			}
+		});
+
+		btnFirstQLKH.setOnAction(e -> {
+
+			pageCountQLKH = 1;
+			if (pageCountQLKH == soLuongTrangQLKH || soLuongTrangQLKH == 0) {
+				btnRightQLKH.setDisable(true);
+				btnLastQLKH.setDisable(true);
+			}
+
+			else {
+				btnRightQLKH.setDisable(false);
+				btnLastQLKH.setDisable(false);
+			}
+			if (pageCountQLKH == 1) {
+				btnLeftQLKH.setDisable(true);
+				btnFirstQLKH.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLKH.setDisable(false);
+				btnFirstQLKH.setDisable(false);
+
+			}
+			startQLKH = 0;
+			endQLKH = 15;
+
+			if (countQLKH > startQLKH) {
+				if (countQLKH >= endQLKH)
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, endQLKH)));
+				else
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, countQLKH)));
+				tableQLKhachHang.refresh();
+				lblPageQLKH.setText(pageCountQLKH + "/" + soLuongTrangQLKH);
+			}
+
+		});
+		btnLastQLKH.setOnAction(e -> {
+
+			pageCountQLKH = soLuongTrangQLKH;
+			if (pageCountQLKH == soLuongTrangQLKH || soLuongTrangQLKH == 0) {
+				btnRightQLKH.setDisable(true);
+				btnLastQLKH.setDisable(true);
+			}
+
+			else {
+				btnRightQLKH.setDisable(false);
+				btnLastQLKH.setDisable(false);
+			}
+			if (pageCountQLKH == 1) {
+				btnLeftQLKH.setDisable(true);
+				btnFirstQLKH.setDisable(true);
+
+			}
+
+			else {
+				btnLeftQLKH.setDisable(false);
+				btnFirstQLKH.setDisable(false);
+
+			}
+			startQLKH = (soLuongTrangQLKH - 1) * 15;
+			endQLKH = (soLuongTrangQLKH - 1) * 15 + 15;
+			// System.out.println(startQLKH + " " + endQLKH);
+			if (countQLKH > startQLKH) {
+				if (countQLKH >= endQLKH)
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, endQLKH)));
+				else
+					tableQLKhachHang
+							.setItems(FXCollections.observableArrayList(dsQLKhachHang.subList(startQLKH, countQLKH)));
+				tableQLKhachHang.refresh();
+
+			}
+			lblPageQLKH.setText(pageCountQLKH + "/" + soLuongTrangQLKH);
+		});
 
 	}
 
@@ -3044,9 +5352,50 @@ public class MHLVChinhController implements Initializable {
 		cbbLoaiXeThemQLSP.setItems(listLoaiXe2);
 		cbbDongXeThemQLSP.setItems(listDongXe2);
 		cbbDongXeThemQLSP.getItems().remove(0);
-		cbbLoaiXeThemQLSP.getItems().remove(0);
+		cbbDongXeThemQLSP.getItems().add("Dòng xe mới!");
+		// cbbLoaiXeThemQLSP.getItems().remove(0);
 		cbbDongXeThemQLSP.getSelectionModel().selectFirst();
 		cbbLoaiXeThemQLSP.getSelectionModel().selectFirst();
+		cbbDongXeThemQLSP.setOnAction(e -> {
+			if (cbbDongXeThemQLSP.getSelectionModel().getSelectedItem() == "Dòng xe mới!") {
+				dialog.setVisible(true);
+				dialogValue.setVisible(true);
+				dialog.toFront();
+				dialogValue.toFront();
+				lblDialogTitleVL.setText("THÊM DÒNG XE MỚI:");
+				lblDialogVLContent.setText("Nhập tên dòng xe mới:");
+
+				btnYesVL.setText("Thêm");
+				btnNoVL.setText("Thoát");
+				btnYesVL.setOnAction(e2 -> {
+					String dongXeMoi = txtValueDialog.getText().trim();
+					lblDialogWarningVL.setText("");
+					if (KiemTraRegexThemDongXeMoi(dongXeMoi) == true) {
+						cbbDongXeThemQLSP.getItems().remove(cbbDongXeThemQLSP.getSelectionModel().getSelectedIndex());
+						cbbDongXeThemQLSP.getItems().add(dongXeMoi);
+						cbbDongXeThemQLSP.getSelectionModel().selectLast();
+						cbbDongXeThemQLSP.getItems().add("Dòng xe mới!");
+						dialog.setVisible(false);
+						dialogValue.setVisible(false);
+						dialog.toBack();
+						dialogValue.toBack();
+
+					} else {
+
+						txtValueDialog.requestFocus();
+					}
+
+				});
+				btnNoVL.setOnAction(x -> {
+					dialog.setVisible(false);
+					dialogValue.setVisible(false);
+					dialog.toBack();
+					dialogValue.toBack();
+
+				});
+
+			}
+		});
 		// ====
 		jcbLoaiXe.setItems(listLoaiXe);
 		jcbLoaiXe.setValue("Tất cả");
@@ -3072,6 +5421,7 @@ public class MHLVChinhController implements Initializable {
 		jcbDongXe1.setValue("Tất cả");
 
 		donGiaSPCol.setCellValueFactory(new PropertyValueFactory<>("dongia"));
+		ThueSPCol.setCellValueFactory(new PropertyValueFactory<>("ThueBan"));
 		soLuongSPCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
 		soLuongSPCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
 
@@ -3086,8 +5436,15 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
+				if (newValue <= 0) {
+					trangThaiQLMatHang.setText("Số lượng phải >= 0.");
+					tableQLSP.refresh();
 
-				mh.setSoLuong(newValue);
+				} else {
+					mh.setSoLuong(newValue);
+					trangThaiQLMatHang.setText("Số lượng đã cập nhật! Bấm lưu để hoàn tất.");
+
+				}
 
 			}
 		});
@@ -3134,8 +5491,44 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
+				if(newValue.toString().matches("[0-9]+")==false) {
+					trangThaiQLMatHang.setText("Đơn giá phải là số dương.");
+					tableQLSP.refresh();
+				}
+				if (newValue <= 0) {
+					trangThaiQLMatHang.setText("Đơn giá phải > 0.");
+					tableQLSP.refresh();
 
-				mh.setDongia(newValue);
+				} else {
+					mh.setDongia(newValue);
+					trangThaiQLMatHang.setText("Đơn giá đã cập nhật! Bấm lưu để hoàn tất.");
+
+				}
+
+			}
+		});
+		ThueSPCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+
+		ThueSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, Double>>() {
+
+			@Override
+			public void handle(CellEditEvent<MatHang, Double> e) {
+
+				TablePosition<MatHang, Double> pos = e.getTablePosition();
+
+				Double newValue = e.getNewValue();
+
+				int row = pos.getRow();
+				MatHang mh = e.getTableView().getItems().get(row);
+				if (newValue <= 0) {
+					trangThaiQLMatHang.setText("Giá trị của thuế  phải >= 0.");
+					tableQLSP.refresh();
+
+				} else {
+					mh.setThueBan(newValue);
+					trangThaiQLMatHang.setText("Giá trị Thuế đã cập nhật! Bấm lưu để hoàn tất.");
+
+				}
 
 			}
 		});
@@ -3177,31 +5570,53 @@ public class MHLVChinhController implements Initializable {
 
 						int row = pos.getRow();
 						MatHang mh = e.getTableView().getItems().get(row);
+						if (newValue <= 0) {
+							trangThaiQLMatHang.setText("Đơn giá phải > 0.");
+							tableQLSP.refresh();
 
-						mh.setDongia(newValue);
+						} else {
+							mh.setDongia(newValue);
+							trangThaiQLMatHang.setText("Đơn giá đã cập nhật! Bấm lưu để hoàn tất.");
+
+						}
 
 					}
 				});
 			}
 			tableQLSP.refresh();
 		});
+		ObservableList<String> listStringLoaiSP = FXCollections.observableArrayList("Xe số", "Xe tay ga",
+				"Xe thể thao");
 		loaiSPCol.setCellValueFactory(new PropertyValueFactory<>("maLoai"));
-		loaiSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
-		loaiSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+		loaiSPCol.setCellFactory(ComboBoxTableCell.forTableColumn(listStringLoaiSP));
 
-			@Override
-			public void handle(CellEditEvent<MatHang, String> e) {
+		loaiSPCol.setOnEditCommit((CellEditEvent<MatHang, String> event) -> {
+			TablePosition<MatHang, String> pos = event.getTablePosition();
 
-				TablePosition<MatHang, String> pos = e.getTablePosition();
+			String newString = event.getNewValue();
 
-				String newValue = e.getNewValue();
+			int row = pos.getRow();
+			MatHang mh = event.getTableView().getItems().get(row);
 
-				int row = pos.getRow();
-				MatHang mh = e.getTableView().getItems().get(row);
-
-				mh.setMaLoai(newValue);
-			}
+			mh.setMaLoai(newString);
+			trangThaiQLMatHang.setText("Loại xe đã cập nhật! Bấm lưu để hoàn tất.");
 		});
+//		loaiSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
+//		loaiSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+//
+//			@Override
+//			public void handle(CellEditEvent<MatHang, String> e) {
+//
+//				TablePosition<MatHang, String> pos = e.getTablePosition();
+//
+//				String newValue = e.getNewValue();
+//
+//				int row = pos.getRow();
+//				MatHang mh = e.getTableView().getItems().get(row);
+//
+//				mh.setMaLoai(newValue);
+//			}
+//		});
 		binhXangSPCol.setCellValueFactory(new PropertyValueFactory<>("binhXang"));
 		binhXangSPCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		// binhXangSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
@@ -3234,27 +5649,67 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
+				if (newValue <= 0) {
+					trangThaiQLMatHang.setText("Giá trị dầu máy phải > 0.");
+					tableQLSP.refresh();
 
-				mh.setDauMay(newValue);
+				} else {
+					mh.setDauMay(newValue);
+					trangThaiQLMatHang.setText("Giá trị dầu máy đã cập nhật! Bấm lưu để hoàn tất.");
+
+				}
+
 			}
 		});
+		ObservableList<String> StringList = FXCollections.observableArrayList();
+		ObservableList<String> StringListMauSac = FXCollections.observableArrayList();
+		// StringList = listDongXe2;
+		matHangDAO.getDSMauSac_DongXe(StringListMauSac, StringList);
+		StringList.remove(0);
+
 		dongSPCol.setCellValueFactory(new PropertyValueFactory<>("DongXe"));
-		dongSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
-		dongSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+//	       dongSPCol.setCellValueFactory(new Callback<CellDataFeatures<MatHang, String>, ObservableValue<String>>() {
+//	 
+//	           @Override
+//	           public ObservableValue<String> call(CellDataFeatures<MatHang, String> param) {
+//	               MatHang mh = param.getTableView().getItems().get(row);
+//	               // F,M
+//	               String StringCode = mh.getDongXe();
+//	               
+//	               return new SimpleObjectProperty<String>(StringCode);
+//	           }
+//	       });
 
-			@Override
-			public void handle(CellEditEvent<MatHang, String> e) {
+		dongSPCol.setCellFactory(ComboBoxTableCell.forTableColumn(StringList));
 
-				TablePosition<MatHang, String> pos = e.getTablePosition();
+		dongSPCol.setOnEditCommit((CellEditEvent<MatHang, String> event) -> {
+			TablePosition<MatHang, String> pos = event.getTablePosition();
 
-				String newValue = e.getNewValue();
+			String newString = event.getNewValue();
 
-				int row = pos.getRow();
-				MatHang mh = e.getTableView().getItems().get(row);
+			int row = pos.getRow();
+			MatHang mh = event.getTableView().getItems().get(row);
 
-				mh.setDongXe(newValue);
-			}
+			mh.setDongXe(newString);
+			trangThaiQLMatHang.setText("Dòng xe đã cập nhật! Bấm lưu để hoàn tất.");
 		});
+//		dongSPCol.setCellValueFactory(new PropertyValueFactory<>("DongXe"));
+//		dongSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
+//		dongSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+//
+//			@Override
+//			public void handle(CellEditEvent<MatHang, String> e) {
+//
+//				TablePosition<MatHang, String> pos = e.getTablePosition();
+//
+//				String newValue = e.getNewValue();
+//
+//				int row = pos.getRow();
+//				MatHang mh = e.getTableView().getItems().get(row);
+//
+//				mh.setDongXe(newValue);
+//			}
+//		});
 		lyDongSPCol.setCellValueFactory(new PropertyValueFactory<>("lyDong"));
 		lyDongSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
 		lyDongSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
@@ -3268,8 +5723,16 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -,]*"))) {
+					trangThaiQLMatHang.setText("Ly động không hợp lệ! ");
+					tableQLSP.refresh();
+				} else {
+					mh.setLyDong(newValue);
+					trangThaiQLMatHang.setText("Đã cập nhật Ly động. Bấm lưu để hoàn tất. ");
 
-				mh.setLyDong(newValue);
+				}
+
 			}
 		});
 		moTaCol.setCellValueFactory(new PropertyValueFactory<>("moTa"));
@@ -3285,8 +5748,17 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -]*,"))) {
+					trangThaiQLMatHang.setText("Mô tả không hợp lệ! ");
+					tableQLSP.refresh();
+				} else {
+					mh.setLyDong(newValue);
+					mh.setMoTa(newValue);
+					trangThaiQLMatHang.setText("Đã cập nhật mô tả. Bấm lưu để hoàn tất. ");
 
-				mh.setMoTa(newValue);
+				}
+
 			}
 		});
 		kichThuocSPCol.setCellValueFactory(new PropertyValueFactory<>("kichThuoc"));
@@ -3302,8 +5774,16 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
+				if (!(lblKichThuocMatHangQLSP.getText().trim().length() > 0
+						&& lblKichThuocMatHangQLSP.getText().trim().matches("(\\d)+( mm x \\d+){2}( mm)"))) {
+					trangThaiQLMatHang.setText("Kích thước phải theo dạng: amm x bmm x cmm ");
+					tableQLSP.refresh();
 
-				mh.setKichThuoc(newValue);
+				} else {
+					mh.setKichThuoc(newValue);
+					trangThaiQLMatHang.setText("Đã cập nhật kích thước. Bấm lưu để hoàn tất. ");
+				}
+
 			}
 		});
 		hinhAnhSPCol.setCellValueFactory(new PropertyValueFactory<>("image"));
@@ -3359,21 +5839,7 @@ public class MHLVChinhController implements Initializable {
 					}
 				};
 		hinhAnhSPCol.setCellFactory(cellFactory);
-//		hinhAnhSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
-//
-//			@Override
-//			public void handle(CellEditEvent<MatHang, String> e) {
-//				
-//				TablePosition<MatHang, String> pos = e.getTablePosition();
-//				JFXButton btn = new JFXButton("Check");
-//				String newValue = e.getNewValue();
-//
-//				int row = pos.getRow();
-//				MatHang mh = e.getTableView().getItems().get(row);
-//
-//				mh.setImage(newValue);
-//			}
-//		});
+
 		khungXeSPCol.setCellValueFactory(new PropertyValueFactory<>("khungxe"));
 		khungXeSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
 		khungXeSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
@@ -3387,45 +5853,90 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
-
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -]*"))) {
+					trangThaiQLMatHang.setText("Khung xe không hợp lệ!");
+					tableQLSP.refresh();
+				} else {
+					mh.setMauXe(newValue);
+					trangThaiQLMatHang.setText("Khung xe đã cập nhật! Bấm lưu để hoàn tất.");
+				}
 				mh.setKhungxe(newValue);
 			}
 		});
 		dongCoSPCol.setCellValueFactory(new PropertyValueFactory<>("dongCo"));
-		dongCoSPCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-		// binhXangSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
+		try {
+
+			dongCoSPCol.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		} catch (Exception e) {
+			trangThaiQLMatHang.setText("Giá trị động cơ phải là số bà > 0.");
+		}
+
 		dongCoSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, Double>>() {
 
 			@Override
 			public void handle(CellEditEvent<MatHang, Double> e) {
+				try {
+					TablePosition<MatHang, Double> pos = e.getTablePosition();
 
-				TablePosition<MatHang, Double> pos = e.getTablePosition();
+					Double newValue = e.getNewValue();
 
-				Double newValue = e.getNewValue();
+					int row = pos.getRow();
+					MatHang mh = e.getTableView().getItems().get(row);
+					if (newValue <= 0) {
+						trangThaiQLMatHang.setText("Giá trị động cơ phải > 0.");
+						tableQLSP.refresh();
 
-				int row = pos.getRow();
-				MatHang mh = e.getTableView().getItems().get(row);
+					} else {
+						mh.setDongCo(newValue);
+						trangThaiQLMatHang.setText("Giá trị động cơ đã cập nhật! Bấm lưu để hoàn tất.");
 
-				mh.setDongCo(newValue);
+					}
+
+				} catch (Exception e1) {
+					trangThaiQLMatHang.setText("Giá trị động cơ phải là số bà > 0.");
+				}
+
 			}
 		});
+
 		mauXeSPCol.setCellValueFactory(new PropertyValueFactory<>("mauXe"));
 		mauXeSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
-		mauXeSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+		mauXeSPCol.setCellFactory(ComboBoxTableCell.forTableColumn(StringListMauSac));
 
-			@Override
-			public void handle(CellEditEvent<MatHang, String> e) {
+		mauXeSPCol.setOnEditCommit((CellEditEvent<MatHang, String> event) -> {
+			TablePosition<MatHang, String> pos = event.getTablePosition();
 
-				TablePosition<MatHang, String> pos = e.getTablePosition();
+			String newString = event.getNewValue();
 
-				String newValue = e.getNewValue();
+			int row = pos.getRow();
+			MatHang mh = event.getTableView().getItems().get(row);
 
-				int row = pos.getRow();
-				MatHang mh = e.getTableView().getItems().get(row);
-
-				mh.setMauXe(newValue);
-			}
+			mh.setMauXe(newString);
+			trangThaiQLMatHang.setText("Màu xe đã cập nhật! Bấm lưu để hoàn tất.");
 		});
+//		mauXeSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+//
+//			@Override
+//			public void handle(CellEditEvent<MatHang, String> e) {
+//
+//				TablePosition<MatHang, String> pos = e.getTablePosition();
+//
+//				String newValue = e.getNewValue();
+//
+//				int row = pos.getRow();
+//				MatHang mh = e.getTableView().getItems().get(row);
+//				if (!(newValue.length() > 0 && newValue.matches(
+//						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -]*"))) {
+//					trangThaiQLMatHang.setText("Màu sản phẩm không hợp lệ!");
+//					tableQLSP.refresh();
+//				} else {
+//					mh.setMauXe(newValue);
+//					trangThaiQLMatHang.setText("Màu sản phẩm đã cập nhật! Bấm lưu để hoàn tất.");
+//				}
+//
+//			}
+//		});
 		tenSPCol.setCellValueFactory(new PropertyValueFactory<>("tenMatHang"));
 		tenSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
 		tenSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
@@ -3439,28 +5950,65 @@ public class MHLVChinhController implements Initializable {
 
 				int row = pos.getRow();
 				MatHang mh = e.getTableView().getItems().get(row);
+				if (!(newValue.length() > 0 && newValue.matches(
+						"[AÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶEÉÈẺẼẸÊẾỀỂỄỆIÍÌỈĨỊOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢUÚÙỦŨỤƯỨỪỬỮỰYÝỲỶỸỴĐaáàảãạâấầẩẫậăắằẳẵặeéèẻẽẹêếềểễệiíìỉĩịoóòỏõọôốồổỗộơớờởỡợuúùủũụưứừửữựyýỳỷỹỵđA-Za-z\\d -]*"))) {
+					trangThaiQLMatHang.setText("Tên sản phẩm không hợp lệ!");
+					tableQLSP.refresh();
+				} else {
+					mh.setTenMatHang(newValue);
+					trangThaiQLMatHang.setText("Tên sản phẩm đã cập nhật! Bấm lưu để hoàn tất.");
+				}
 
-				mh.setTenMatHang(newValue);
 			}
 		});
 		maSPCol.setCellValueFactory(new PropertyValueFactory<>("maMatHang"));
-		maSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
-		maSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+//		maSPCol.setCellFactory(TextFieldTableCell.<MatHang>forTableColumn());
+//		maSPCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<MatHang, String>>() {
+//
+//			@Override
+//			public void handle(CellEditEvent<MatHang, String> e) {
+//
+//				TablePosition<MatHang, String> pos = e.getTablePosition();
+//
+//				String newValue = e.getNewValue();
+//
+//				int row = pos.getRow();
+//				MatHang mh = e.getTableView().getItems().get(row);
+//
+//				mh.setMaMatHang(newValue);
+//			}
+//		});
+//		tableQLSP.setOnKeyPressed(e->{
+//			MatHang mh = tableQLSP.getSelectionModel().getSelectedItem();
+//			//Đang06
+//			lblBinhXangMatHangQLSP.setText(mh.getMaMatHang());
+//			lblDauMayMatHangQLSP.setText();
+//			lblMoTaMatHangQLSP.setText("");
+//			lblDongCoMatHangQLSP.setText("");
+//			lblDonGiaMatHangQLSP.setText("");
+//			lblKhungXeMatHangQLSP.setText("");
+//			lblKichThuocMatHangQLSP.setText("");
+//			lblLyDongMatHangQLSP.setText("");
+//			lblMaMatHangQLSP.setText("");
+//			lblMauXeQLSP.setText("");
+//			lblSoLuongMatHangQLSP.setText("");
+//			lblTenMatHangQLSP.setText("");
+//			lblThueMatHangQLSP.setText("");
+//			cbbDongXeThemQLSP.getSelectionModel().selectFirst();
+//			cbbLoaiXeThemQLSP.getSelectionModel().selectFirst();
+//			lblMaMatHangQLSP.requestFocus();
+//			
+//		});
+	}
 
-			@Override
-			public void handle(CellEditEvent<MatHang, String> e) {
-
-				TablePosition<MatHang, String> pos = e.getTablePosition();
-
-				String newValue = e.getNewValue();
-
-				int row = pos.getRow();
-				MatHang mh = e.getTableView().getItems().get(row);
-
-				mh.setMaMatHang(newValue);
-			}
-		});
-
+	private boolean KiemTraRegexThemDongXeMoi(String s) {
+		System.out.println(s);
+		if (!(s.length() > 0 && s.matches("[\\w ]+"))) {
+			XuLyBtnNoRegex(txtValueDialog);
+			lblDialogWarningVL.setText("Dòng xe không được để trống và chỉ chứa các ký tự và số.");
+			return false;
+		}
+		return true;
 	}
 
 	private void dialogThemVaoGioHang_Trung() {
@@ -3645,11 +6193,10 @@ public class MHLVChinhController implements Initializable {
 	}
 
 	private void XuLyThemSanPhamVaoGioHang(CTHD hd, MatHang mh, String maSP) {
-
-		boolean check = regexDialog();
+		String sl = txtValueDialog.getText();
+		boolean check = regexDialog(sl);
 		if (check == true) {
 			// nhập số lượng đúng
-			String sl = txtValueDialog.getText();
 
 			if (Integer.parseInt(sl.toString()) <= mh.getSoLuong()) {
 				hd.setSoLuong(Integer.parseInt(sl.toString()));
@@ -3721,71 +6268,128 @@ public class MHLVChinhController implements Initializable {
 	 * 
 	 * @return tính hợp lệ của số lượng sản phẩm!
 	 */
-	private boolean regexDialog() {
+	private boolean regexDialog(String soLuong) {
+
+		if (soLuong.length() > 0) {
+			try {
+				int x = Integer.parseInt(soLuong);
+				if (x <= 0) {
+//					JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên >=0 !!!");
+					txtValueDialog.requestFocus();
+					lblDialogWarningVL.setText("Số lượng phải là số nguyên >0 !");
+					return false;
+				}
+			} catch (Exception e) {
+//				JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên >=0 !!!");
+//				txtSoLuong.requestFocus();
+				txtValueDialog.requestFocus();
+				lblDialogWarningVL.setText("Số lượng phải là số nguyên >0 !");
+				return false;
+			}
+
+		} else {
+//			JtxtValueDialog.requestFocus();
+			lblDialogWarningVL.setText("Số lượng không được để trống !");
+			return false;
+		}
 		return true;
 
 	}
 
 	private boolean dialogLapHDMoi() {
-		dialog.setVisible(true);
-		dialogThongBao.setVisible(true);
-		dialogThongBao.toFront();
-		dialog.toFront();
-		lblDialogTitle.setText("Xác nhận lập hoá đơn");
-		lblDialogContent.setText("Lưu ý: Hoá đơn đã tạo sẽ không thể xoá hoặc sửa?");
-		btnYes.setOnAction(e -> {
-			lblDialogTitle.setText("Đang lưu hoá đơn...");
-			lblDialogContent.setText("Lưu ý: Vui lòng chờ!");
-			long millis = System.currentTimeMillis();
-			java.sql.Date date = new java.sql.Date(millis);
-			// System.out.println(date);
-			txtNgayLHD.setText(date.toString());
-			HoaDonDAO hddao = new HoaDonDAO();
-			String maHD = java.time.LocalDateTime.now().toString();
-			maHD = maHD.replace(".", "");
-			maHD = maHD.replace("-", "");
-			maHD = maHD.replace(":", "");
-			// System.out.println(maHD);
+		if (dsGioHang.size() == 0) {
+			dialog.setVisible(true);
+			dialog.toFront();
+			dialogThongBao.setVisible(true);
+			dialogThongBao.toFront();
+			lblDialogTitle.setText("Giỏ hàng trống!");
+			lblDialogContent.setText(
+					"Danh sách giỏ hàng đang trống. Bạn có muốn chuyển sang giỏ hàng không?. Chọn KHÔNG sẽ chuyển về màn hình chính!");
+			btnYes.setOnAction(e -> {
+				timKiem_them_matHang.toFront();
+				tree.getSelectionModel().select(HD_TaoGioHang);
+				XuLyTableGioHang();
+				dialog.setVisible(false);
+				dialog.toBack();
+				;
+				dialogThongBao.setVisible(false);
+				dialogThongBao.toBack();
+
+				// Đang06
+			});
+			btnNo.setOnAction(e -> {
+				manHinhLamViecChinh.toFront();
+				count = 1;
+				tree.getSelectionModel().select(null);
+				tree_QLHD.setExpanded(false);
+				tree_TK.setExpanded(false);
+				dialog.setVisible(false);
+				dialog.toBack();
+				;
+				dialogThongBao.setVisible(false);
+				dialogThongBao.toBack();
+			});
+			return false;
+		} else {
+			dialog.setVisible(true);
+			dialogThongBao.setVisible(true);
+			dialogThongBao.toFront();
+			dialog.toFront();
+			lblDialogTitle.setText("Xác nhận lập hoá đơn");
+			lblDialogContent.setText("Lưu ý: Hoá đơn đã tạo sẽ không thể xoá hoặc sửa?");
+			btnYes.setOnAction(e -> {
+				lblDialogTitle.setText("Đang lưu hoá đơn...");
+				lblDialogContent.setText("Lưu ý: Vui lòng chờ!");
+				long millis = System.currentTimeMillis();
+				java.sql.Date date = new java.sql.Date(millis);
+				// System.out.println(date);
+				txtNgayLHD.setText(date.toString());
+				HoaDonDAO hddao = new HoaDonDAO();
+				String maHD = java.time.LocalDateTime.now().toString();
+				maHD = maHD.replace(".", "");
+				maHD = maHD.replace("-", "");
+				maHD = maHD.replace(":", "");
+				// System.out.println(maHD);
 //			Double thanhTien = 0.0;
 //			for (CTHD cthd : dsGioHang) {
 //				cthd.setMaHoaDon(maHD);
 //				thanhTien += cthd.getThanhTien();
 //
 //			}
-			Double tamTinh = 0.0;
-			Double price = 0.0;
-			// thanhtienGioHang = 0.0;
-			for (CTHD cthd : dsGioHang) {
-				// thanhtienGioHang += cthd.getThanhTien();
-				MatHangDAO matHangDAO = new MatHangDAO();
-				MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
-				tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
-				price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
-				cthd.setMaHoaDon(maHD);
-			}
-			// CTHD hd = c.getTableView().getItems().get(this.getIndex());
+				Double tamTinh = 0.0;
+				Double price = 0.0;
+				// thanhtienGioHang = 0.0;
+				for (CTHD cthd : dsGioHang) {
+					// thanhtienGioHang += cthd.getThanhTien();
+					MatHangDAO matHangDAO = new MatHangDAO();
+					MatHang mh2 = matHangDAO.getMatHangg(cthd.getMaMatHang());
+					tamTinh = mh2.getThueBan() / 100 * cthd.getDonGia();
+					price += cthd.getThanhTien() + tamTinh * cthd.getSoLuong();
+					cthd.setMaHoaDon(maHD);
+				}
+				// CTHD hd = c.getTableView().getItems().get(this.getIndex());
 
-			txtTongTienThemHD.setText(formatter.format(price));
-			//
-			lblTongTienGH.setText(formatter.format(thanhtienGioHang));
-			tableGioHang.refresh();
-			tableLapHoaDon.refresh();
-			HoaDon hd = new HoaDon(maHD, txtCMNDKHLHD.getText().trim(), txtMaNVLHD.getText(), date, price);
-			hddao.themHoaDon(hd, dsGioHang);
-			// dsGioHang.get(1);
-			dialog.setVisible(false);
-			dialogThongBao.setVisible(false);
-			dialogThemHDThanhCong();
+				txtTongTienThemHD.setText(formatter.format(price));
+				//
+				lblTongTienGH.setText(formatter.format(thanhtienGioHang));
+				tableGioHang.refresh();
+				tableLapHoaDon.refresh();
+				HoaDon hd = new HoaDon(maHD, txtCMNDKHLHD.getText().trim(), txtMaNVLHD.getText(), date, price);
+				hddao.themHoaDon(hd, dsGioHang);
+				// dsGioHang.get(1);
+				dialog.setVisible(false);
+				dialogThongBao.setVisible(false);
+				dialogThemHDThanhCong();
 
-		});
-		btnNo.setOnAction(e -> {
-			dialog.setVisible(false);
-			dialogThongBao.setVisible(false);
-			dialog.toBack();
-		});
+			});
+			btnNo.setOnAction(e -> {
+				dialog.setVisible(false);
+				dialogThongBao.setVisible(false);
+				dialog.toBack();
+			});
 
-		return true;
-
+			return true;
+		}
 	}
 
 	private void dialogThemHDThanhCong() {
@@ -3830,6 +6434,8 @@ public class MHLVChinhController implements Initializable {
 		dialog.toFront();
 		dialogThongBao.setVisible(true);
 		dialogThongBao.toFront();
+		dialogDoiMatKhau.setVisible(false);
+		dialogDoiMatKhau.toBack();
 		lblDialogTitle.setText("Xác nhận đăng xuất");
 		lblDialogContent.setText("Bạn có chắc chắn muốn đăng xuất khỏi tải khoản này không?");
 		btnYes.setOnAction(e -> {
@@ -3897,7 +6503,7 @@ public class MHLVChinhController implements Initializable {
 					lblTenNVLogin.setText(nv.getHoNV() + " " + nv.getTenNV());
 					LoginPane.setVisible(false);
 					MenuPane.setVisible(true);
-					menuCaiDat.setVisible(true);
+					menuCaiDat.setVisible(false);
 					dialogDoiMatKhau.setVisible(false);
 					lblLGStatus.setText("");
 					lblLGStatus.setText("*Đăng nhập thành công!");
@@ -3905,24 +6511,29 @@ public class MHLVChinhController implements Initializable {
 					menuHelp.setVisible(false);
 					// if(nv.getChucVu().equals("Nhân viên")) tree_TK.setValue("");
 					root.getChildren().clear();
+					tree_TK.getChildren().clear();
 					tree_QLHD.getChildren().clear();
 					tree_QLHD.getChildren().addAll(HD_taoHD, HD_TaoGioHang, HD_QLHD);
 					tree_QLHD.setGraphic(new ImageView(new Image("img/billSmall.png")));
 					HD_taoHD.setGraphic(imgLuu);
-					
+
 					HD_TaoGioHang.setGraphic(new ImageView(new Image("img/giohangblack.png")));
 					HD_QLHD.setGraphic(new ImageView(new Image("img/lookBill.png")));
-					tree_TK.getChildren().addAll(TK_DoanhThu, TK_KhachHang, TK_NhanVien, TK_SanPham);
+					tree_TK.getChildren().addAll(TK_DoanhThu, TK_KhachHang, TK_SanPham);
 					root.getChildren().addAll(tree_QLHD, tree_QLKH, tree_QLSP);
 					tree_QLSP.setGraphic(new ImageView(new Image("img/sanphamSmall.png")));
 					tree_QLKH.setGraphic(new ImageView(new Image("img/group.png")));
 					tree_TK.setGraphic(new ImageView(new Image("img/pie-chart.png")));
-					
+					tree_QLNV.setGraphic(new ImageView(new Image("img/nhanvien.png")));
 					TK_DoanhThu.setGraphic(new ImageView(new Image("img/dollar.png")));
 					TK_SanPham.setGraphic(new ImageView(new Image("img/customer-feedback.png")));
-					TK_NhanVien.setGraphic(new ImageView(new Image("img/group.png")));
-					if (nv.getChucVu().equals("Nhân viên") == false)
+					TK_KhachHang.setGraphic(new ImageView(new Image("img/group.png")));
+					if (nv.getChucVu().equals("Nhân viên") == false) {
+						root.getChildren().addAll(tree_QLNV);
 						root.getChildren().addAll(tree_TK);
+					}
+					else btnChucNang3.setDisable(true);
+
 					tree.setShowRoot(false);
 
 					tree.setRoot(root);
@@ -3943,30 +6554,31 @@ public class MHLVChinhController implements Initializable {
 	}
 
 	public void XuLyLapHoaDon() {
-		txtTienThuaLHD.setOnKeyTyped(e->{
+		txtTienThuaLHD.setOnKeyTyped(e -> {
 			System.out.println(txtTienThuaLHD.getText());
-			if(XuLyRegexTienThua()==true) {
+			if (XuLyRegexTienThua() == true) {
 				String DT = txtTienThuaLHD.getText();
 				Double tienkhachtra = Double.parseDouble(DT);
-				Double tienthua =  tienkhachtra - price ;
-				if(tienthua>=0)
-				txtTienThoiThemHD.setText(formatter.format(tienthua));
-				else txtTienThoiThemHD.setText("Tiền khách trả chưa đủ!");
-				
+				Double tienthua = tienkhachtra - price;
+				if (tienthua >= 0)
+					txtTienThoiThemHD.setText(formatter.format(tienthua));
+				else
+					txtTienThoiThemHD.setText("Tiền khách trả chưa đủ!");
+
+			} else {
+
+				// XuLyDiaLogTienThoi_Loi("Tiền khách trả lỗi!!","Tiền khách trả chỉ chứa số từ
+				// 0 - 9.");
+
 			}
-			else {
-				
-				//XuLyDiaLogTienThoi_Loi("Tiền khách trả lỗi!!","Tiền khách trả chỉ chứa số từ 0 - 9.");
-				
-			}
-			
+
 		});
 		txtMaNVLHD.setText(nv.getMaNV());
 		txtTenNVLHD.setText(nv.getTenNV());
 		txtHoNVLHD.setText(nv.getHoNV());
 		// txtHoKHLHD.setText("");
-		txtCMNDKHLHD.setText(txtsoCMNDQLKH.getText().trim());
-		if (txtCMNDKHLHD.getText().trim().equals("") == true) {
+//		txtCMNDKHLHD.setText(txtsoCMNDQLKH.getText().trim());
+		if (txtCMNDKHLHD.getText().equals("") == true || txtCMNDKHLHD.getText() == null) {
 			dialog.toFront();
 			dialogThongBao.setVisible(true);
 			dialogThongBao.toFront();
@@ -3975,14 +6587,13 @@ public class MHLVChinhController implements Initializable {
 			lblDialogContent.setText("Bạn có muốn chuyển sang chức năng chọn khách hàng không? ");
 			btnNo.setDisable(true);
 			btnYes.setOnAction(e -> {
-
+				XuLyQLKH();
 				dialog.setVisible(false);
 				dialogThongBao.setVisible(false);
 				QLKhachHangPane.toFront();
 				count = 0;
-				// jlistView.getSelectionModel().select(2);
-				TreeItem<String> x = tree.getSelectionModel().getSelectedItem().getParent().nextSibling();
-				tree.getSelectionModel().select(x);
+
+				tree.getSelectionModel().select(tree_QLKH);
 				btnNo.setDisable(false);
 			});
 			btnNo.setOnAction(e -> {
@@ -3995,7 +6606,6 @@ public class MHLVChinhController implements Initializable {
 		java.sql.Date date = new java.sql.Date(millis);
 		// System.out.println(date);
 		txtNgayLHD.setText(date.toString());
-		
 
 	}
 
@@ -4007,21 +6617,22 @@ public class MHLVChinhController implements Initializable {
 		lblDialogTitle.setText(title);
 		lblDialogContent.setText(content);
 		btnYes.setVisible(false);
-		btnNo.setOnAction(e2->{
+		btnNo.setOnAction(e2 -> {
 			dialog.setVisible(false);
 			dialog.toBack();
 			dialogThongBao.toBack();
 			dialogThongBao.setVisible(false);
 			btnYes.setVisible(true);
-			
+
 		});
-		
+
 	}
 
 	private boolean XuLyRegexTienThua() {
 		String DT = txtTienThuaLHD.getText();
-		if (!(DT.length()>0 && DT.matches("[0-9]+"))) {
-			XuLyDiaLogTienThoi_Loi("Tiền khách trả lỗi!", "Tiền khách trả phải là số lớn hơn 0 và lớn hơn giá tiền phải trả.");
+		if (!(DT.length() > 0 && DT.matches("[0-9]+"))) {
+			XuLyDiaLogTienThoi_Loi("Tiền khách trả lỗi!",
+					"Tiền khách trả phải là số lớn hơn 0 và lớn hơn giá tiền phải trả.");
 			return false;
 		}
 		if (DT.length() > 0) {
@@ -4035,14 +6646,13 @@ public class MHLVChinhController implements Initializable {
 				XuLyDiaLogTienThoi_Loi("Tiền khách trả lỗi!", "Tiền khách trả phải là số.");
 				return false;
 			}
-			
+
 		} else {
 			XuLyDiaLogTienThoi_Loi("Tiền khách trả lỗi!", "Tiền khách trả phải là số.");
 			return false;
 		}
-		 return true;
-		
-		
+		return true;
+
 	}
 
 	@FXML
@@ -4077,6 +6687,9 @@ public class MHLVChinhController implements Initializable {
 			XuLybtnTimKiemQLSP();
 
 		});
+		txtSearchQLSP.setOnKeyPressed(e -> {
+			XuLybtnTimKiemQLSP();
+		});
 		btnRight.setOnAction(e1 -> {
 
 			pageCount = pageCount + 1;
@@ -4110,9 +6723,11 @@ public class MHLVChinhController implements Initializable {
 					tableQLSP.setItems(FXCollections.observableArrayList(dsQLSP.subList(start, end)));
 				else
 					tableQLSP.setItems(FXCollections.observableArrayList(dsQLSP.subList(start, count)));
-				tableQLSP.refresh();
-				lblPageQLSP.setText(pageCount + "/" + soLuongTrang);
+				
+				
 			}
+			tableQLSP.refresh();
+			lblPageQLSP.setText(pageCount + "/" + soLuongTrang);
 		});
 		btnLeft.setOnAction(e3 -> {
 
@@ -4145,9 +6760,10 @@ public class MHLVChinhController implements Initializable {
 					tableQLSP.setItems(FXCollections.observableArrayList(dsQLSP.subList(start, end)));
 				else
 					tableQLSP.setItems(FXCollections.observableArrayList(dsQLSP.subList(start, count)));
-				tableQLSP.refresh();
-				lblPageQLSP.setText(pageCount + "/" + soLuongTrang);
+				
 			}
+			tableQLSP.refresh();
+			lblPageQLSP.setText(pageCount + "/" + soLuongTrang);
 		});
 
 		btnFirst.setOnAction(e -> {
@@ -4218,8 +6834,9 @@ public class MHLVChinhController implements Initializable {
 				else
 					tableQLSP.setItems(FXCollections.observableArrayList(dsQLSP.subList(start, count)));
 				tableQLSP.refresh();
-				lblPageQLSP.setText(pageCount + "/" + soLuongTrang);
+
 			}
+			lblPageQLSP.setText(pageCount + "/" + soLuongTrang);
 		});
 
 //	tableQLSP.refresh();
@@ -4321,7 +6938,7 @@ public class MHLVChinhController implements Initializable {
 		// txtMatKhauNVTT.setText(nv.getMatKhau());
 		txtsoCMNDNVTT.setText(nv.getSoCMND());
 		// password="";
-		//btnUnMaskTTCN.setGraphic(imgVUnMask);
+		// btnUnMaskTTCN.setGraphic(imgVUnMask);
 //		ImageView imgVUnMask = new ImageView(imageUnMask);
 //		ImageView imgVMask = new ImageView(imageMask);
 //		btnUnMaskTTCN.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
@@ -4355,22 +6972,7 @@ public class MHLVChinhController implements Initializable {
 
 		menuCaiDat.setVisible(true);
 		menuCaiDat.toFront();
-		btnThemFilePath.setOnAction(e -> {
-			FileChooser chooser = new FileChooser();
-			FileChooser.ExtensionFilter txtFilte = new FileChooser.ExtensionFilter("TextFile", "*.txt");
-			chooser.getExtensionFilters().add(txtFilte);
 
-			File file2 = chooser.showOpenDialog(manHinhLamViecChinh.getScene().getWindow());
-
-			if (file2 == null) {
-
-			} else {
-
-				txtThemFilePath.setText(file2.getPath().toString());
-
-			}
-
-		});
 		btnThemFolderImg.setOnAction(e -> {
 			DirectoryChooser chooser = new DirectoryChooser();
 
@@ -4401,19 +7003,11 @@ public class MHLVChinhController implements Initializable {
 			}
 
 		});
-		btnThemDatabase.setOnAction(e -> {
-			DirectoryChooser chooser = new DirectoryChooser();
 
-			File file2 = chooser.showDialog(manHinhLamViecChinh.getScene().getWindow());
-
-			if (file2 == null) {
-
-			} else {
-
-				txtThemDatabase.setText(file2.getPath().toString());
-
-			}
-
+		btnThoatCaiDat.setOnAction(e -> {
+			menuHelp.setVisible(false);
+			menuCaiDat.setVisible(false);
+			menuHelp.toBack();
 		});
 
 	}

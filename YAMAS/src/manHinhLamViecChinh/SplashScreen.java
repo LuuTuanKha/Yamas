@@ -64,12 +64,12 @@ public class SplashScreen extends Preloader {
 	@Override
 	public void handleStateChangeNotification(StateChangeNotification stateChangeNotification) {
 		if (stateChangeNotification.getType() == Type.BEFORE_START) {
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+////				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			stage.hide();
 		}
 	}

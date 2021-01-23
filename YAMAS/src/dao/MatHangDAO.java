@@ -14,12 +14,14 @@ import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
 import connectDATA.Connect_Data;
 import entity.CTHD;
 import entity.MatHang;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableView;
 import manHinhLamViecChinh.MHLVChinhController;
 
@@ -222,7 +224,7 @@ public class MatHangDAO {
 			// String Count = "SELECT count(mamathang) " + "FROM [dbo].[MatHang]" + "WHERE
 			// [MaMatHang] is not null";
 			String query = "SELECT  [MaMatHang],[TenMatHang],[MaLoai],[Dong],[SoLuong],[DTBinhXang],[DTDauMay],[HTLyDong],[MoTa],[MauXe],[DongCo],[KichThuoc],[KhungXe],[DonGia],[img],[ThueBan],[Dong] "
-					+ "FROM [dbo].[MatHang]" + "WHERE [MaMatHang] is not null and soLuong>0 ";
+					+ "FROM [dbo].[MatHang]" + "WHERE [MaMatHang] is not null ";
 
 			if (jcbLoaiXe.getSelectionModel().getSelectedIndex() != 0) {
 				if (jcbLoaiXe.getSelectionModel().getSelectedIndex() == 1)
@@ -267,8 +269,13 @@ public class MatHangDAO {
 				if (jcbGiaThanh.getSelectionModel().getSelectedIndex() == 5)
 					query += "and dongia >=100000000 ";
 			}
-			if (txt.getText().equals("") == false)
+			if (txt.getText().equals("") == false) {
 				query += "and tenmathang like N\'%" + txt.getText().trim() + "%\' ";
+				query += "or mamathang like N\'%" + txt.getText().trim() + "%\' ";
+
+				
+			}
+				
 
 			// System.out.println(query);
 			Statement state = conn.createStatement();
@@ -521,6 +528,58 @@ public class MatHangDAO {
 			e.printStackTrace();
 		}
 		return true;
+	}
+	public void getTopMatHang(XYChart.Series<String, Integer> list,
+			 JFXDatePicker from, JFXDatePicker to,JFXComboBox<String> cbb) {
+		
+		Connect_Data.getInstance();
+		Connection conn = Connect_Data.getConnection();
+		list.getData().clear();
+		
+		try {
+			String query="";
+			
+			if(cbb.getSelectionModel().getSelectedIndex()==0) 
+				query = "SELECT top 5 [MaMatHang], sum([SoLuong])  FROM  [dbo].[CTHD] as cthd LEFT  JOIN  [dbo].[HoaDon]as hd \r\n"
+						+ " ON cthd.MaHoaDon = hd.MaHoaDon ";
+			else if (cbb.getSelectionModel().getSelectedIndex()==1) 
+			query = "SELECT top 10 [MaMatHang], sum([SoLuong])  FROM  [dbo].[CTHD] as cthd LEFT  JOIN  [dbo].[HoaDon]as hd \r\n"
+					+ " ON cthd.MaHoaDon = hd.MaHoaDon ";
+			else if (cbb.getSelectionModel().getSelectedIndex()==2) 
+				query = "SELECT top 20 [MaMatHang], sum([SoLuong])  FROM  [dbo].[CTHD] as cthd LEFT  JOIN  [dbo].[HoaDon]as hd \r\n"
+						+ " ON cthd.MaHoaDon = hd.MaHoaDon ";
+			else if (cbb.getSelectionModel().getSelectedIndex()==3) 
+				query = "SELECT top 30 [MaMatHang], sum([SoLuong])  FROM  [dbo].[CTHD] as cthd LEFT  JOIN  [dbo].[HoaDon]as hd \r\n"
+						+ " ON cthd.MaHoaDon = hd.MaHoaDon ";
+			
+			else query = "SELECT [MaMatHang], sum([SoLuong])  FROM  [dbo].[CTHD] as cthd LEFT  JOIN  [dbo].[HoaDon]as hd \r\n"
+					+ " ON cthd.MaHoaDon = hd.MaHoaDon ";
+			
+			if (from.getValue() != null && to.getValue() != null) {
+				
+				System.out.println("Đã");
+				query += "where hd.[NgayLapHD] >= \'" + from.getValue().toString() + "\' ";
+				query += "and hd.[NgayLapHD] <= \'" + to.getValue().toString() + "\' ";
+			}
+			query += " group by [MaMatHang] \r\n"
+					+ " ORDER BY 2 desc";
+			
+			System.out.println(query);
+			Statement state = conn.createStatement();
+			ResultSet rs = state.executeQuery(query);
+			
+			while (rs.next()) {
+				
+				list.getData().add(new XYChart.Data<String, Integer>(rs.getString(1),rs.getInt(2)));
+				//listLN.getData().add(new XYChart.Data<String, Double>("Quý " +rs.getString(2).toString()+ "-" + rs.getString(1), rs.getDouble(3) / 10));
+				//listLN.getData().add(new XYChart.Data<String, Double>(rs.getDate(1).toString(), rs.getDouble(1) / 10));
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public static void main(String[] args) {

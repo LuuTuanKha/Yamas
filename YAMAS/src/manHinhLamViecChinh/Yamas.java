@@ -44,13 +44,14 @@ public class Yamas extends Application {
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			if (screenSize.width < 1600)
+			if (screenSize.width < 1600 && screenSize.width>1500)
 				primaryStage.setFullScreen(true);
 			else {
 				// primaryStage.initStyle(StageStyle.UNDECORATED);
-				primaryStage.setResizable(false);
+				//primaryStage.setResizable(false);
 				primaryStage.setFullScreen(false);
 			}
+			primaryStage.setResizable(false);
 			primaryStage.getIcons().add(new Image("img/logo.png"));
 			scene.getStylesheets().add(getClass().getResource("application2.css").toExternalForm());
 			
